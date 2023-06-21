@@ -49,8 +49,16 @@ public class Startup
 
         app.UseRouting();
         app.UseAuthorization();
-        app.UseEndpoints(x => { x.MapControllers(); });
+        app.UseEndpoints(x =>
+        {
+            x.MapControllers();
+            x.MapGet("/", async context =>
+            {
+                await context.Response.WriteAsync("Hello World!");
+            });
+        });
         app.UseCors("AllowAllOrigin");
+        //配置Consul
         RegisterConsul(appLifetime);
     }
 
