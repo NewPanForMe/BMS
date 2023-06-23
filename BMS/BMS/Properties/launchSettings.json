@@ -12,7 +12,8 @@
     "BMS": {
         "commandName": "Project",
         "dotnetRunMessages": true,
-        "launchBrowser": false,
+      "launchBrowser": false,
+        "launchUrl": "swagger",
         "applicationUrl": "http://localhost:6000",
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development"

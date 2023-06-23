@@ -3,7 +3,12 @@ using BMS_Base.Interface;
 using BMS_Db.EfContext;
 using Consul;
 using Microsoft.EntityFrameworkCore;
+using NLog.Fluent;
 using System.Reflection;
+using System.Reflection.Emit;
+using NLog.Extensions.Logging;
+using Ys.Tools.MiddleWare;
+using Ys.Tools.Config;
 
 namespace BMS;
 
@@ -35,12 +40,15 @@ public class Startup
                     .AllowCredentials();
             });
         });
+        RegisterNLog(services);
         //注入数据库
         RegisterDb(services);
         //自动实现类注入
         RegisterIBll(services);
         //获取consulConfig
         RegisterConsul(services);
+        //获取TokenConfig
+        RegisterToken(services);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +61,7 @@ public class Startup
             app.UseSwaggerUI();
         }
         app.UseRouting();
+        app.UseMiddleware<ExceptionMiddleWare>();
         app.UseAuthorization();
         app.UseAuthentication();
         app.UseEndpoints(x =>
@@ -104,30 +113,21 @@ public class Startup
     /// <param name="service"></param>
     private static void RegisterIBll(IServiceCollection service)
     {
-        //获取所有需要注入的类
-        var assemblies = Assembly.GetAssembly(typeof(IBll))?.GetTypes().ToList();
-        //循环所有的类
-        assemblies?.ForEach(x =>
+        //获取程序下所有的程序集
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+        assemblies.ForEach(assembly =>
         {
-            var interfaces = x.GetInterfaces().ToList();
-            interfaces.ForEach(inter =>
+            //获取跟BMS相关的类
+            var types = assembly.GetTypes().Where(x=>x is { FullName: { }, IsClass: true } && x.FullName.Contains("BMS")).ToList();
+            types.ForEach(type =>
             {
-                service.AddScoped(x);
+                var list = type.GetInterfaces().Where(x=>x==typeof(IBll)).ToList();
+                if(list.Count>0)
+                    service.AddScoped(type);
+                var staticBll = type.GetInterfaces().Where(x => x == typeof(IStaticBll)).ToList();
+                if (staticBll.Count > 0)
+                    service.AddSingleton(type);
             });
-
-        });
-
-        //获取所有需要注入的类
-        var staticType = Assembly.GetAssembly(typeof(IStaticBll))?.GetTypes().ToList();
-        //循环所有的类
-        staticType?.ForEach(x =>
-        {
-            var interfaces = x.GetInterfaces().ToList();
-            interfaces.ForEach(inter =>
-            {
-                service.AddSingleton(x);
-            });
-
         });
     }
 
@@ -140,6 +140,7 @@ public class Startup
         service.Configure<DbConfig>(_configuration.GetSection("DbConfig"));
         _configuration.Bind("DbConfig", DbConfig.Instance);
         Console.WriteLine("DbConfig：" + DbConfig.Instance);
+        //已经注入，可以直接使用
         service.AddDbContext<BmsV1DbContext>(opt =>
         {
             opt.UseSqlServer(DbConfig.Instance.SqlServer);
@@ -155,7 +156,30 @@ public class Startup
         //获取配置文件信息
         service.Configure<ConsulConfig>(_configuration.GetSection("ConsulConfig"));
         _configuration.Bind("ConsulConfig", ConsulConfig.Instance);
-        Console.WriteLine("ConsulConfig：" + ConsulConfig.Instance);
     }
+
+    /// <summary>
+    /// 配置Nlog
+    /// </summary>
+    /// <param name="service"></param>
+    private static void RegisterNLog(IServiceCollection service)
+    {
+        service.AddLogging(log =>
+        {
+            log.AddNLog();
+        });
+    }
+    /// <summary>
+    /// 注入Token
+    /// </summary>
+    /// <param name="service"></param>
+    private  void RegisterToken(IServiceCollection service)
+    {
+        service.Configure<TokenConfig>(_configuration.GetSection("TokenConfig"));
+        _configuration.Bind("TokenConfig", TokenConfig.Instance);
+        Console.WriteLine("TokenConfig：" + TokenConfig.Instance);
+   
+    }
+
 
 }

@@ -12,9 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.7" />
+    <PackageReference Include="Ys.Tools" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BMS_Base\BMS_Base.csproj" />
     <ProjectReference Include="..\BMS_Models\BMS_Models.csproj" />
   </ItemGroup>
 
