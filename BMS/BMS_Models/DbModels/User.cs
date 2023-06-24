@@ -6,6 +6,8 @@ public record User
     public string Code { get; set; } = string.Empty;
     public string LoginName { get; set; } = string.Empty;
     public string LoginPassword { get; set; } = string.Empty;
+    public string LoginPasswordSalt { get; set; } = string.Empty;
+
     public string? Name { get; set; }
     public string? Gender { get; set; } 
     public int? IdCard { get; set; }

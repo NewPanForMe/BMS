@@ -29,23 +29,21 @@ public class UserBll:IBll
     public string Check(string userName, string password)
     {
         var user = _dbContext.User.FirstOrDefault(x => x.LoginName == userName).NotNull("用户不存在");
-        var passSecret = Md5Tools.MD5_32(password).ToLower();
+        var passSecret = Md5Tools.MD5_32(password+ user?.LoginPasswordSalt).ToLower();
+        Console.WriteLine($"passSecret={passSecret}");
         user?.IsDelete.IsBool("账户已删除");
         user?.IsLock.IsBool("账户已锁定");
-        if (user != null && user.LoginPassword.Equals(passSecret))
+        if (user == null || !user.LoginPassword.Equals(passSecret)) return "账户密码不正确";
+        user.JwtVersion++;
+        var listClaims = new List<Claim>()
         {
-            user.JwtVersion++;
-            var listClaims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Name,user.Name ?? ""),
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(ClaimTypes.Version,user.JwtVersion.ToString()),
-                new Claim("UserCode",user.Code),
-            };
-            var token = TokenTools.Create(listClaims);
-            return token;
-        }
-        return "账户密码不正确";
+            new Claim(ClaimTypes.Name,user.Name ?? ""),
+            new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+            new Claim(ClaimTypes.Version,user.JwtVersion.ToString()),
+            new Claim("UserCode",user.Code),
+        };
+        var token = TokenTools.Create(listClaims);
+        return token;
     }
 
 }
