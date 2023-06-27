@@ -37,7 +37,7 @@ namespace BMS.Controllers
             return ApiResult.True();
         }
 
-        [HttpGet]
+        [HttpPost]
         public ApiResult Check(JsonElement req)
         {
             var userName = req.GetJsonString("userName").HasValueNoNameOrPwd("用户名为空");
