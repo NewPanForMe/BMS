@@ -6,7 +6,7 @@ import axios from 'axios'
 
 const instance = axios.create({
     //默认url
-    baseURL: "https://localhost:7090/api/",
+    baseURL: window.config.baseURL,
 })
 //统一设置post请求头
 //instance.defaults.headers.post['Content-Type'] = "application/json";

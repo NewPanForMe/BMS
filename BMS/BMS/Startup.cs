@@ -61,7 +61,12 @@ public class Startup
             app.UseSwaggerUI();
         }
         app.UseRouting();
+        //UseCors 必须放在 之后 UseRouting 和之前 UseAuthorization。
+        //这是为了确保 CORS 标头包含在已授权和未经授权的调用的响应中。
+        app.UseCors("AllowAllOrigin");
+
         app.UseMiddleware<ExceptionMiddleWare>();
+
         app.UseAuthorization();
         app.UseAuthentication();
         app.UseEndpoints(x =>
@@ -72,7 +77,6 @@ public class Startup
                 await context.Response.WriteAsync("Hello World!");
             });
         });
-        app.UseCors("AllowAllOrigin");
         //配置Consul
         RegisterConsul(appLifetime);
     }
