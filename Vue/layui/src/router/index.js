@@ -1,46 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+  import home from './home/index'
+  import login from './login/index'
 const routes = [
-  {
-    path: '/',
-    component: ()=>import("../views/login/Login.vue")
-  },
-   {
-    path: '/login',  name: 'login',
-    component: ()=>import("../views/login/Login.vue")
-  },
-  {
-    path: '/home',
-    name: 'home',
-    meta:{title:"系统管理"},
-    component: () => import( '../views/home/Index.vue'),
-    children:[
-      {
-        path:"/homepage",
-        name:"homepage",
-        meta:{title:"首页"},
-        component:()=>import("@/views/home/homepage.vue") 
-      },
-      {
-        path:"/order",
-        name:"order",
-        meta:{title:"订单"},
-        component:()=>import("@/views/order/Index.vue")
-      },
-      {
-        path:"/orderadd",
-        name:"orderadd",
-        meta:{title:"订单"},
-        component:()=>import("@/views/order/add.vue")
-      },
-      {
-        path:"/user",
-        name:"user",
-        meta:{title:"用户"},
-        component:()=>import("@/views/user/Index.vue")
-      }
-    ]
-  }
+...home,
+...login
 ]
 
 const router = createRouter({
@@ -48,4 +11,22 @@ const router = createRouter({
   routes
 })
 
+//全局守卫
+router.beforeEach((to, from, next) => {
+  // //用户访问的是'/notes'
+  // if(to.path === '/homepage') {
+  //   //查看一下用户是否保存了登录状态信息
+  //   let user = 
+  //   JSON.parse(localStorage.getItem('user'))
+  //   if(user) {
+  //     //如果有，直接放行
+  //     next();
+  //   }else {
+  //     //如果没有，用户跳转登录页面登录
+  //     next('/login')
+  //   }
+  // }else {
+    next();
+ // }
+})
 export default router

@@ -33,11 +33,7 @@ public class Startup
         {
             options.AddPolicy("AllowAllOrigin", builder =>
             {
-                builder
-                    .SetIsOriginAllowed(_ => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();;
             });
         });
         RegisterNLog(services);
@@ -64,11 +60,10 @@ public class Startup
         //UseCors 必须放在 之后 UseRouting 和之前 UseAuthorization。
         //这是为了确保 CORS 标头包含在已授权和未经授权的调用的响应中。
         app.UseCors("AllowAllOrigin");
-
-        app.UseMiddleware<ExceptionMiddleWare>();
-
         app.UseAuthorization();
         app.UseAuthentication();
+        app.UseMiddleware<ExceptionMiddleWare>();
+
         app.UseEndpoints(x =>
         {
             x.MapControllers();

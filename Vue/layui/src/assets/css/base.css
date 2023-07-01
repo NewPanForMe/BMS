@@ -21,6 +21,7 @@ body {
 }
 /* 登录页 */
 .login {
+    background-image: url("../img/bj.jpg");
     width: 100%;
     height: 100vh;
     background-size: cover;

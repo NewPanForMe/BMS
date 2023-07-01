@@ -9,7 +9,7 @@
           <lay-input v-model="model.password" type="password"></lay-input>
         </lay-form-item>
         <lay-form-item style="text-align: center;">
-          <lay-button type="primary" @click="submit">提交</lay-button>
+          <lay-button type="primary" @click="submit">登录</lay-button>
         </lay-form-item>
       </lay-form>
     </div>
@@ -22,14 +22,22 @@ import { layer } from '@layui/layer-vue'
 
 export default {
   setup() {
-    const model=  reactive({})
+    const model = reactive({})
     return {
       model
     }
   },
   methods: {
     submit() {
-      this.$router.push("/homepage")
+      console.log(this.model)
+      this.checkLogin()
+      //  this.$router.push("/homepage")
+    },
+    checkLogin() {
+      console.log(this.$api.checkUserName)
+      this.$instance.post(this.$api.checkUserName, this.model).then(resp => {
+        console.log(resp)
+      })
     }
   }
 }
