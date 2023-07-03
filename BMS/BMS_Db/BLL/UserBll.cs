@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using BMS_Base.Config;
 using BMS_Base.Interface;
 using BMS_Db.EfContext;
 using Consul;
@@ -11,7 +12,7 @@ using Ys.Tools.Response;
 
 namespace BMS_Db.BLL;
 
-public class UserBll:IBll
+public class UserBll : IBll
 {
     private readonly BmsV1DbContext _dbContext;
     private readonly ILogger<UserBaseBll> _logger;
@@ -26,15 +27,28 @@ public class UserBll:IBll
     /// </summary>
     /// <param name="userName"></param>
     /// <param name="password"></param>
-    public string Check(string userName, string password)
+    public ApiResult Check(string userName, string password)
     {
         var user = _dbContext.User.FirstOrDefault(x => x.LoginName == userName).NotNull("用户不存在");
-        var passSecret = Md5Tools.MD5_32(password+ user.LoginPasswordSalt).ToLower();
+        var passSecret = Md5Tools.MD5_32(password + user.LoginPasswordSalt).ToLower();
         Console.WriteLine($"passSecret={passSecret}");
         user.IsDelete.IsBool("账户已删除");
         user.IsLock.IsBool("账户已锁定");
-        if ( !user.LoginPassword.Equals(passSecret)) return "账户密码不正确";
+        if (!user.LoginPassword.Equals(passSecret))
+        {
+            user.ErrorCount += 1;
+            if (user.ErrorCount == 3)
+            {
+                user.IsLock=true;
+                user.ErrorCancelTime = DateTime.Now.AddMinutes(SystemConfig.Instance.ErrorCount);
+                _dbContext.SaveChangesAsync();
+                return ApiResult.False($"您的账户已锁定，请于{SystemConfig.Instance.ErrorCount}分钟后重试");
+            }
+            _dbContext.SaveChangesAsync();
+            return ApiResult.False("账户密码不正确");
+        }
         user.JwtVersion++;
+        user.ErrorCount=0;
         var listClaims = new List<Claim>()
         {
             new Claim(ClaimTypes.Name,user.Name ?? ""),
@@ -43,7 +57,7 @@ public class UserBll:IBll
             new Claim("UserCode",user.Code),
         };
         var token = TokenTools.Create(listClaims);
-        return token;
+        return ApiResult.True(new { token });
     }
 
 }

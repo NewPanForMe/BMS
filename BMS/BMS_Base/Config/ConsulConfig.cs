@@ -19,6 +19,10 @@ public record ConsulConfig
     /// 运行端口
     /// </summary>
     public int Port { get; set; } = 0;
+    /// <summary>
+    /// 基础url
+    /// </summary>
+    public string BaseUrl { get; set; } = string.Empty;
 
- 
+
 }

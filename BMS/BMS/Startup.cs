@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NLog.Fluent;
 using System.Reflection;
 using System.Reflection.Emit;
+using BMS_Base.WindowsServices;
 using NLog.Extensions.Logging;
 using Ys.Tools.MiddleWare;
 using Ys.Tools.Config;
@@ -36,6 +37,7 @@ public class Startup
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();;
             });
         });
+        services.AddHostedService<ResetUserService>();
         RegisterNLog(services);
         //注入数据库
         RegisterDb(services);
@@ -45,6 +47,8 @@ public class Startup
         RegisterConsul(services);
         //获取TokenConfig
         RegisterToken(services);
+        //获取SystemConfig
+        RegisterSystem(services);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,7 +85,7 @@ public class Startup
     /// <param name="appLifetime"></param>
     private static void RegisterConsul(IHostApplicationLifetime appLifetime)
     {
-        using var client = new ConsulClient(x => x.Address = new Uri("http://127.0.0.1:8500"));
+        using var client = new ConsulClient(x => x.Address = new Uri(ConsulConfig.Instance.BaseUrl));
         var check = new AgentServiceCheck()
         {
             DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5),//服务停止后，5s开始接触注册
@@ -101,7 +105,7 @@ public class Startup
         appLifetime.ApplicationStopped.Register(() =>
         {
             Console.WriteLine("服务停止中");
-            using var consulClient = new ConsulClient(x => x.Address = new Uri("http://127.0.0.1:8500"));
+            using var consulClient = new ConsulClient(x => x.Address = new Uri(ConsulConfig.Instance.BaseUrl));
             consulClient.Agent.ServiceDeregister(service.ID).Wait();
         });
     }
@@ -165,7 +169,7 @@ public class Startup
     {
         service.AddLogging(log =>
         {
-            log.AddNLog();
+            log.AddNLog("nlog.config");
         });
     }
     /// <summary>
@@ -180,5 +184,15 @@ public class Startup
    
     }
 
+    /// <summary>
+    /// 注入SyStem
+    /// </summary>
+    /// <param name="service"></param>
+    private void RegisterSystem(IServiceCollection service)
+    {
+        service.Configure<SystemConfig>(_configuration.GetSection("SystemConfig"));
+        _configuration.Bind("SystemConfig", SystemConfig.Instance);
+        Console.WriteLine("SystemConfig：" + SystemConfig.Instance);
 
+    }
 }

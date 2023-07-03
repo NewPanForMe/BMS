@@ -27,9 +27,14 @@ namespace BMS.Controllers
         {
             var userName = req.GetJsonString("userName").HasValueNoNameOrPwd("用户名为空");
             var password = req.GetJsonString("password").HasValueNoNameOrPwd("密码为空");
-            var token = _userBll.Check(userName, password);
-            _logger.LogInformation($"UserController_Check_ApiResult_{ApiResult.True(new { token })}");
-            return ApiResult.True(new { token });
+            _logger.LogInformation($"{userName}登录");
+            return _userBll.Check(userName, password); ;
         }
+        [HttpGet]
+        public void Test()
+        {
+            _logger.LogWarning("发生了事情");
+        }
+
     }
 }

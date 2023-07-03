@@ -26,8 +26,6 @@ namespace BMS.Controllers
             _logger = logger;
             _dbContext = dbContext;
         }
-
-
         [HttpPost]
         [Authorize]
         public ApiResult Add(User user)
