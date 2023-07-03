@@ -38,6 +38,7 @@ export default {
       this.$instance.post(this.$api.checkUserName, this.model).then(resp => {
         console.log(resp)
       })
+
     }
   }
 }

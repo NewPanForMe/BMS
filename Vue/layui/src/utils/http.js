@@ -2,16 +2,24 @@
 import cookies from 'vue-cookies'
 //通讯组件
 import axios from 'axios'
-
+import { layer } from "@layui/layui-vue"
 const instance = axios.create({
     //默认url
-    baseURL: window.config.baseUrl,
+    baseURL: "/BmsV1Service",
 })
 //统一设置post请求头
 //instance.defaults.headers.post['Content-Type'] = "application/json";
-//instance.defaults.headers.get['Access-Control-Allow-Origin'] = "*";
-//instance.defaults.headers.post['Access-Control-Allow-Origin'] = "*";
 
+//设置axios为form-data
+//instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+//instance.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded';
+//instance.defaults.transformRequest = [function (data) {
+//     let ret = ''
+//     for (let it in data) {
+//       ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+//     }
+//     return ret
+// }]
 //添加请求拦截器
 instance.interceptors.request.use(config => {
     console.log("1111")
@@ -27,15 +35,16 @@ instance.interceptors.request.use(config => {
 //添加resp拦截器
 instance.interceptors.response.use(resp => {
     //如果返回的结果为true
+    console.log( window.$layer)
     if (!resp.data.success) {
         window.$layer.msg(resp.data.message);
-        return Promise.reject(resp.data.Message);
+        return ;
     }
     else {
         return resp.data;
     }
 }, error => {
-   console.log(error.message)
+   console.log(error)
 });
 
 export default instance

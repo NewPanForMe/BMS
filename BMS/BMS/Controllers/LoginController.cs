@@ -25,6 +25,7 @@ namespace BMS.Controllers
         [HttpPost]
         public ApiResult Check(JsonElement req)
         {
+
             var userName = req.GetJsonString("userName").HasValueNoNameOrPwd("用户名为空");
             var password = req.GetJsonString("password").HasValueNoNameOrPwd("密码为空");
             _logger.LogInformation($"{userName}登录");

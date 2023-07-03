@@ -1,4 +1,4 @@
 const api ={
-    checkUserName:"Login/CheckLogin",
+    checkUserName:window.config.baseUrl +"/Login/Check",
 }
 export default api
