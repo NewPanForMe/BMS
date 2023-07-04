@@ -5,36 +5,49 @@ using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Ys.Tools;
+using Ys.Tools.Controllers;
 using Ys.Tools.Extra;
+using Ys.Tools.Models;
 using Ys.Tools.Response;
 
 namespace BMS.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UserController : ControllerBase
+    [Authorize]
+    public class UserController : BaseController
     {
         private readonly  UserBaseBll _userBaseBll;
         private readonly  BmsV1DbContext _dbContext;
-        private readonly  UserBll _userBll;
         private readonly  ILogger<UserController> _logger;
 
-        public UserController(UserBaseBll userBaseBll, UserBll userBll, ILogger<UserController> logger, BmsV1DbContext dbContext)
+        public UserController(UserBaseBll userBaseBll,  ILogger<UserController> logger, BmsV1DbContext dbContext)
         {
             _userBaseBll = userBaseBll;
-            _userBll = userBll;
             _logger = logger;
             _dbContext = dbContext;
         }
         [HttpPost]
-        [Authorize]
         public ApiResult Add(User user)
         {
+            
             _userBaseBll.Add(user);
             _dbContext.SaveChanges();
             return ApiResult.True();
         }
 
+        [HttpGet]
+        public async Task<ApiResult> GetList()
+        {
+            var user = await _userBaseBll.GetUser();
+            return user;
+        }
 
+        [HttpGet]
+        public ApiResult GetUserTokenInfo()
+        {
+            return ApiResult.True(CurrentUser.ToString());
+        }
     }
 }

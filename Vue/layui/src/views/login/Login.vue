@@ -34,11 +34,12 @@ export default {
       //  this.$router.push("/homepage")
     },
     checkLogin() {
-      console.log(this.$api.checkUserName)
       this.$instance.post(this.$api.checkUserName, this.model).then(resp => {
         console.log(resp)
+        let token= resp.result.token;
+        this.$cookies.saveToken(token)
+        this.$router.push("/homepage")
       })
-
     }
   }
 }

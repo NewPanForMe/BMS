@@ -3,6 +3,7 @@ using BMS_Db.EfContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using Ys.Tools.Exception;
 using Ys.Tools.Extra;
 using Ys.Tools.Response;
 
@@ -23,12 +24,13 @@ namespace BMS.Controllers
             _dbContext = dbContext;
         }
         [HttpPost]
-        public ApiResult Check(JsonElement req)
+        public Task<ApiResult> Check(JsonElement req)
         {
             var userName = req.GetJsonString("username").HasValueNoNameOrPwd("用户名为空");
             var password = req.GetJsonString("password").HasValueNoNameOrPwd("密码为空");
             _logger.LogInformation("{userName}登录", userName);
-            return _userBll.Check(userName, password);
+            return _userBll.CheckAsync(userName, password);
         }
     }
+
 }

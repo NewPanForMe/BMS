@@ -1,13 +1,17 @@
 ﻿using System.Reflection;
+using System.Text;
 using BMS_Base.Config;
 using BMS_Db.EfContext;
 using Consul;
 using Microsoft.EntityFrameworkCore;
-using BMS_Base.WindowsServices;
 using NLog.Extensions.Logging;
 using Ys.Tools.MiddleWare;
 using Ys.Tools.Config;
 using Ys.Tools.Interface;
+using System.Text.RegularExpressions;
+using BMS_Db.WindowsServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BMS;
 
@@ -20,6 +24,7 @@ public class Startup
     {
         this._configuration = configuration;
     }
+
     // This method gets called by the runtime. Use this method to add services to the container.
     // 该方法由运行时调用，使用该方法向DI容器添加服务
     public void ConfigureServices(IServiceCollection services)
@@ -32,9 +37,36 @@ public class Startup
         {
             options.AddPolicy("AllowAllOrigin", builder =>
             {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();;
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); ;
             });
         });
+
+
+        // 注入Jwt
+        services.AddAuthentication(option =>
+        {
+            //认证middleware配置
+            option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(config =>
+        {
+            config.TokenValidationParameters = new TokenValidationParameters
+            {
+                //Token颁发机构
+                ValidIssuer = TokenConfig.Instance.IsUser,
+                //颁发给谁
+                ValidAudience = TokenConfig.Instance.Audience,
+                //这里的key要进行加密
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TokenConfig.Instance.Key)),
+                //是否验证Token有效期，使用当前时间与Token的Claims中的NotBefore和Expires对比
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+            };
+            config.SaveToken = true;
+        });
+
+        services.AddMemoryCache();
+
         //services.AddHostedService<ResetUserService>();
         RegisterNLog(services);
         //注入数据库
@@ -62,8 +94,10 @@ public class Startup
         //UseCors 必须放在 之后 UseRouting 和之前 UseAuthorization。
         //这是为了确保 CORS 标头包含在已授权和未经授权的调用的响应中。
         app.UseCors("AllowAllOrigin");
-        app.UseAuthorization();
         app.UseAuthentication();
+
+        app.UseAuthorization();
+        app.UseResponseCaching();
         app.UseMiddleware<ExceptionMiddleWare>();
 
         app.UseEndpoints(x =>
@@ -114,15 +148,32 @@ public class Startup
     /// <param name="service"></param>
     private static void RegisterIBll(IServiceCollection service)
     {
-        var assemblies = Assembly.GetAssembly(typeof(IBll))?.GetTypes().ToList();
-        assemblies.ForEach(Console.WriteLine);
+        var assemblies = Assembly.GetEntryAssembly()?.GetReferencedAssemblies().Select(Assembly.Load).ToList();
+        assemblies?.ForEach(assembly =>
+        {
+            var list2 = assembly.GetTypes().Where(x => x.IsClass && x.GetInterfaces().Any(y => y == typeof(IBll))).ToList();
+            list2.ForEach(type =>
+            {
+                service.AddScoped(type);
+            });
+        });
+        assemblies?.ForEach(assembly =>
+        {
+            var list2 = assembly.GetTypes().Where(x => x.IsClass && x.GetInterfaces().Any(y => y == typeof(IStaticBll))).ToList();
+            list2.ForEach(type =>
+            {
+                service.AddSingleton(type);
+            });
+        });
+
+
     }
 
     /// <summary>
     /// 注入数据库
     /// </summary>
     /// <param name="service"></param>
-    private  void RegisterDb(IServiceCollection service)
+    private void RegisterDb(IServiceCollection service)
     {
         service.Configure<DbConfig>(_configuration.GetSection("DbConfig"));
         _configuration.Bind("DbConfig", DbConfig.Instance);
@@ -160,12 +211,12 @@ public class Startup
     /// 注入Token
     /// </summary>
     /// <param name="service"></param>
-    private  void RegisterToken(IServiceCollection service)
+    private void RegisterToken(IServiceCollection service)
     {
         service.Configure<TokenConfig>(_configuration.GetSection("TokenConfig"));
         _configuration.Bind("TokenConfig", TokenConfig.Instance);
         Console.WriteLine("TokenConfig：" + TokenConfig.Instance);
-   
+
     }
 
     /// <summary>

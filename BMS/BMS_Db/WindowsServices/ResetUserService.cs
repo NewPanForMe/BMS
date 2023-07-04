@@ -1,15 +1,15 @@
-﻿using System.ComponentModel;
-using BMS_Db.EfContext;
+﻿using BMS_Db.EfContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-namespace BMS_Base.WindowsServices;
+namespace BMS_Db.WindowsServices;
 
 /// <summary>
+/// 此功能移动至WorkService，此处代码作废
 /// 自动完成用户解锁的方法
 /// </summary>
+[Obsolete]
 public class ResetUserService : BackgroundService
 {
 

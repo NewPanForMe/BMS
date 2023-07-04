@@ -83,7 +83,10 @@ export default {
       return response;
     },
     add(){
-      this.$router.push("/orderadd")
+      this.$instance.get(this.$api.user.GetUserList).then(resp => {
+        console.log(resp)
+      })
+     // this.$router.push("/orderadd")
     }
   }
 }
