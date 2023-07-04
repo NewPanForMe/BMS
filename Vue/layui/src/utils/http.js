@@ -8,7 +8,7 @@ const instance = axios.create({
     baseURL: "/BmsV1Service",
 })
 //统一设置post请求头
-//instance.defaults.headers.post['Content-Type'] = "application/json";
+instance.defaults.headers.post['Content-Type'] = "application/json";
 
 //设置axios为form-data
 //instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -22,7 +22,6 @@ const instance = axios.create({
 // }]
 //添加请求拦截器
 instance.interceptors.request.use(config => {
-    console.log("1111")
     console.log(config)
     //判断cookie是否存在
     var token = cookies.get("token");
@@ -30,7 +29,9 @@ instance.interceptors.request.use(config => {
     config.headers.token = token;
     return config;
 }, error => {
-    return config;
+    window.$layer.msg(error);
+    console.log(error);
+    return;
 });
 //添加resp拦截器
 instance.interceptors.response.use(resp => {

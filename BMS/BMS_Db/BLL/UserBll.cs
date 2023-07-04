@@ -1,12 +1,10 @@
 ﻿using System.Security.Claims;
 using BMS_Base.Config;
-using BMS_Base.Interface;
 using BMS_Db.EfContext;
-using Consul;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using Ys.Base.Tools.xTool;
 using Ys.Tools.Extra;
+using Ys.Tools.Interface;
 using Ys.Tools.MoreTool;
 using Ys.Tools.Response;
 
@@ -42,11 +40,11 @@ public  class UserBll : IBll
                 user.IsLock=true;
                 user.ErrorCancelTime = DateTime.Now.AddMinutes(SystemConfig.Instance.ErrorCount);
                 _dbContext.SaveChangesAsync();
-                _logger.LogWarning($"{userName}账户锁定，锁定时长：{SystemConfig.Instance.ErrorCount}分钟");
-                return ApiResult.False($"您的账户已锁定，请于{SystemConfig.Instance.ErrorCount}分钟后重试");
+                _logger.LogWarning("{userName}账户锁定，锁定时长：{ SystemConfig.Instance.ErrorCount}分钟", userName, SystemConfig.Instance.ErrorCount);
+                return ApiResult.False("您的账户已锁定，请于{SystemConfig.Instance.ErrorCount}分钟后重试", SystemConfig.Instance.ErrorCount);
             }
             _dbContext.SaveChangesAsync();
-            _logger.LogWarning($"{userName}账户密码不正确");
+            _logger.LogWarning("{userName}账户密码不正确", userName);
             return ApiResult.False("账户密码不正确");
         }
         user.JwtVersion++;
@@ -59,7 +57,7 @@ public  class UserBll : IBll
             new Claim("UserCode",user.Code),
         };
         var token = TokenTools.Create(listClaims);
-        _logger.LogWarning($"{userName}登录成功，生成token【{token}】");
+        _logger.LogWarning("{userName}登录成功，生成token【{token}】", userName, token);
         return ApiResult.True(new { token });
     }
 

@@ -1,15 +1,13 @@
-﻿using BMS_Base.Config;
-using BMS_Base.Interface;
+﻿using System.Reflection;
+using BMS_Base.Config;
 using BMS_Db.EfContext;
 using Consul;
 using Microsoft.EntityFrameworkCore;
-using NLog.Fluent;
-using System.Reflection;
-using System.Reflection.Emit;
 using BMS_Base.WindowsServices;
 using NLog.Extensions.Logging;
 using Ys.Tools.MiddleWare;
 using Ys.Tools.Config;
+using Ys.Tools.Interface;
 
 namespace BMS;
 
@@ -37,7 +35,7 @@ public class Startup
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();;
             });
         });
-        services.AddHostedService<ResetUserService>();
+        //services.AddHostedService<ResetUserService>();
         RegisterNLog(services);
         //注入数据库
         RegisterDb(services);
@@ -116,22 +114,8 @@ public class Startup
     /// <param name="service"></param>
     private static void RegisterIBll(IServiceCollection service)
     {
-        //获取程序下所有的程序集
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-        assemblies.ForEach(assembly =>
-        {
-            //获取跟BMS相关的类
-            var types = assembly.GetTypes().Where(x=>x is { FullName: { }, IsClass: true } && x.FullName.Contains("BMS")).ToList();
-            types.ForEach(type =>
-            {
-                var list = type.GetInterfaces().Where(x=>x==typeof(IBll)).ToList();
-                if(list.Count>0)
-                    service.AddScoped(type);
-                var staticBll = type.GetInterfaces().Where(x => x == typeof(IStaticBll)).ToList();
-                if (staticBll.Count > 0)
-                    service.AddSingleton(type);
-            });
-        });
+        var assemblies = Assembly.GetAssembly(typeof(IBll))?.GetTypes().ToList();
+        assemblies.ForEach(Console.WriteLine);
     }
 
     /// <summary>

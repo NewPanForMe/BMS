@@ -25,17 +25,10 @@ namespace BMS.Controllers
         [HttpPost]
         public ApiResult Check(JsonElement req)
         {
-
-            var userName = req.GetJsonString("userName").HasValueNoNameOrPwd("用户名为空");
+            var userName = req.GetJsonString("username").HasValueNoNameOrPwd("用户名为空");
             var password = req.GetJsonString("password").HasValueNoNameOrPwd("密码为空");
-            _logger.LogInformation($"{userName}登录");
-            return _userBll.Check(userName, password); ;
+            _logger.LogInformation("{userName}登录", userName);
+            return _userBll.Check(userName, password);
         }
-        [HttpGet]
-        public void Test()
-        {
-            _logger.LogWarning("发生了事情");
-        }
-
     }
 }

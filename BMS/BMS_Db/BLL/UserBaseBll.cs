@@ -1,10 +1,8 @@
-﻿using BMS_Base.Interface;
-using BMS_Db.EfContext;
+﻿using BMS_Db.EfContext;
 using BMS_Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Ys.Base.Tools.xTool;
-using Ys.Tools.Extra;
+using Ys.Tools.Interface;
 using Ys.Tools.Response;
 
 namespace BMS_Db.BLL;
@@ -31,6 +29,7 @@ public class UserBaseBll:IBll
     {
         user.JwtVersion = 1;
         _dbContext.User.Add(user);
+        _logger.LogWarning("新增用户：{user}", user);
     }
 
     /// <summary>
@@ -41,6 +40,8 @@ public class UserBaseBll:IBll
     public void Edit(User user)
     {
         _dbContext.User.Update(user);
+        _logger.LogWarning("修改用户：{user}", user);
+
     }
 
     /// <summary>
@@ -51,7 +52,9 @@ public class UserBaseBll:IBll
     public void Delete(User user)
     {
         user.IsDelete = true;
-        _dbContext.User.Update(user);
+        _dbContext.User.Remove(user);
+        _logger.LogWarning("删除用户：{user}", user);
+
     }
 
     /// <summary>
@@ -61,6 +64,7 @@ public class UserBaseBll:IBll
     public async Task<ApiResult> GetUser()
     {
         var listAsync = await _dbContext.User.ToListAsync();
+        _logger.LogWarning("获取用户列表：{user}", listAsync.Count);
         return ApiResult.True(listAsync);
     }
 }
