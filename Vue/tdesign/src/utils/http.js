@@ -1,6 +1,6 @@
 //通讯组件
 import axios from "axios";
-
+import cookie from '@/utils/cookies';
 const instance = axios.create({
     //默认url
     baseURL: "/BmsV1Service",
@@ -10,13 +10,11 @@ instance.defaults.headers.post["Content-Type"] = "application/json";
 //添加请求拦截器
 instance.interceptors.request.use(
     (config) => {
-        console.log(this.$cookies);
         //判断cookie是否存在
-        var token = this.$cookies.getToken();
+        var token =cookie.getToken();
         if (token) {
             //存在,放入请求头
             config.headers.Authorization = "Bearer " + token;
-            return false;
         }
         return config;
     },
@@ -31,10 +29,13 @@ instance.interceptors.response.use(
     (resp) => {
         //如果返回的结果为true
         if (resp.data.success == true) {
-            return resp.data;
+            if(resp.data!=null){
+                return resp.data;
+            }
+            return false;
         } else if (resp.data.result == "400") {
             this.$router.push("/login");
-            this.$cookies.removeToken();
+            cookie.removeToken();
             return false;
         } else {
             this.$message.config('top', 'body', [10, 20], 9999);

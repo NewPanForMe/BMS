@@ -4,6 +4,9 @@ const tokenName = "token";
     saveToken(token){
        return cookies.set(tokenName,token)
     },
+    saveJwtVersion(token){
+        return cookies.set(tokenName,token)
+     },
     getToken(){
         return cookies.get(tokenName);
     },

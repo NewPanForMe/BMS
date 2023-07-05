@@ -2,14 +2,15 @@
     <div class="login">
         <div class="login-content">
             <p class="login-text"><strong>BMS后台管理系统</strong></p>
-            <t-form :data="form.user" ref="form"  @submit="onSubmit" :colon="true" :labelWidth="0">
+            <t-form :data="form.user" ref="form" @submit="onSubmit" :colon="true" :labelWidth="0">
                 <t-form-item name="account">
-                    <t-input clearable v-model="form.user.username" autocomplete="false"  placeholder="请输入账户名">
+                    <t-input clearable v-model="form.user.username" autocomplete="false" placeholder="请输入账户名">
                         <desktop-icon slot="prefix-icon"></desktop-icon>
                     </t-input>
                 </t-form-item>
                 <t-form-item name="password">
-                    <t-input type="password" clearable v-model="form.user.password" autocomplete="false"  placeholder="请输入密码">
+                    <t-input type="password" clearable v-model="form.user.password" autocomplete="false"
+                        placeholder="请输入密码">
                         <lock-on-icon slot="prefix-icon"></lock-on-icon>
                     </t-input>
                 </t-form-item>
@@ -22,8 +23,9 @@
 </template>
 <script>
 import { DesktopIcon, LockOnIcon } from 'tdesign-icons-vue';
+import cookie from '@/utils/cookies';
 export default {
-    components:{DesktopIcon, LockOnIcon },
+    components: { DesktopIcon, LockOnIcon },
     data() {
         return {
             form: {
@@ -42,7 +44,18 @@ export default {
             console.log(111);
             console.log(this.form)
             console.log(this.$instance)
-            
+            console.log(this.$api)
+            console.log(this.$cookies)
+            this.$instance.post(this.$api.login.checkUserName, this.form.user).then(resp => {
+                console.log(resp)
+                const token  = resp.result.token;
+                const jwtVersion  = resp.result.jwtVersion;
+                cookie.saveToken(token);
+                cookie.saveJwtVersion(jwtVersion);
+                this.$router.push("/index")
+            })
+
+
         },
     },
 };

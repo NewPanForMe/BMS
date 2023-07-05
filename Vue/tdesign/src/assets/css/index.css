@@ -43,3 +43,19 @@ body {
     font-size: 30px;
     text-align: center;
 }
+
+.layout .t-layout__sider{
+    height: 100vh;
+}
+.layout .t-layout__footer{
+    background-color: gray;
+    height: 1vh;
+    padding: 15px 15px 20px 15px
+}
+.layout .layout-content-top{
+    height: 3vh;
+    background-color: rgb(221, 217, 217);
+    padding: 5px 4px 0px 8px;
+}
+
+
