@@ -13,8 +13,8 @@ public class JwtVersionMiddleWare
     public async Task InvokeAsync(HttpContext context)
     {
         var pwd = context.Request.Query["password"];
-
-        await _next(context);
-
+          
+            await _next(context);
+        
     }
 }
