@@ -19,7 +19,8 @@
 <script >
 import { ref, reactive } from 'vue'
 import { layer } from '@layui/layer-vue'
-
+import instance from '@/utils/http'
+import api from '@/api/login/index'
 export default {
   setup() {
     const model = reactive({})
@@ -31,10 +32,9 @@ export default {
     submit() {
       console.log(this.model)
       this.checkLogin()
-      //  this.$router.push("/homepage")
     },
     checkLogin() {
-      this.$instance.post(this.$api.checkUserName, this.model).then(resp => {
+      instance.post(api.checkUserName, this.model).then(resp => {
         console.log(resp)
       })
     }

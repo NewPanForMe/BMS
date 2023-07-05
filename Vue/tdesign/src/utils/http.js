@@ -1,8 +1,5 @@
 //通讯组件
 import axios from "axios";
-import cookie from '@/utils/cookie'
-import layer from '@layui/layui-vue'
-import {useRouter} from 'vue-router'
 
 const instance = axios.create({
     //默认url
@@ -11,13 +8,14 @@ const instance = axios.create({
 //统一设置post请求头
 instance.defaults.headers.post["Content-Type"] = "application/json";
 //添加请求拦截器
-instance.interceptors.request.use((config) => {
-        console.log( cookie);
+instance.interceptors.request.use(
+    (config) => {
+        console.log(this.$cookies);
         //判断cookie是否存在
-        var token =cookie.getToken();
+        var token = this.$cookies.getToken();
         if (token) {
             //存在,放入请求头
-            config.headers.Authorization ="Bearer "+ token;
+            config.headers.Authorization = "Bearer " + token;
             return false;
         }
         return config;
@@ -34,14 +32,13 @@ instance.interceptors.response.use(
         //如果返回的结果为true
         if (resp.data.success == true) {
             return resp.data;
-        } 
-        else if(resp.data.result=="400"){
-            useRouter().push("/login")
-             cookie.removeToken();
-             return false;
-        }
-        else {
-            this.$layer.msg(resp.data.result);
+        } else if (resp.data.result == "400") {
+            this.$router.push("/login");
+            this.$cookies.removeToken();
+            return false;
+        } else {
+            this.$message.config('top', 'body', [10, 20], 9999);
+            this.$message.msg(resp.data.result);
             return false;
         }
     },

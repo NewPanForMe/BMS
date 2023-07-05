@@ -9,6 +9,7 @@ using Ys.Tools.MiddleWare;
 using Ys.Tools.Config;
 using Ys.Tools.Interface;
 using System.Text.RegularExpressions;
+using BMS_Base.MiddleWare;
 using BMS_Db.WindowsServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -97,6 +98,7 @@ public class Startup
         app.UseAuthorization();
         app.UseResponseCaching();
         app.UseMiddleware<ExceptionMiddleWare>();
+        app.UseMiddleware<JwtVersionMiddleWare>();
 
         app.UseEndpoints(x =>
         {
