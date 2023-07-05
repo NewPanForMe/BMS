@@ -12,14 +12,12 @@ instance.defaults.headers.post["Content-Type"] = "application/json";
 //添加请求拦截器
 instance.interceptors.request.use((config) => {
         console.log(config);
+        console.log( this.$cookies);
         //判断cookie是否存在
         var token = this.$cookies.getToken();
         if (token) {
             //存在,放入请求头
             config.headers.Authorization ="Bearer "+ token;
-        }else{
-            this.$router.push("/login")
-            this.$cookies.removeToken();
             return false;
         }
         return config;
@@ -34,7 +32,6 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
     (resp) => {
         //如果返回的结果为true
-        console.log(window.$layer);
         if (resp.data.success == true) {
             return resp.data;
         } 

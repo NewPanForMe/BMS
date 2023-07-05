@@ -40,8 +40,6 @@ public class Startup
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); ;
             });
         });
-
-
         // 注入Jwt
         services.AddAuthentication(option =>
         {

@@ -71,7 +71,7 @@ public  class UserBll : IBll
         var token = TokenTools.Create(listClaims);
         _logger.LogWarning("{userName}登录成功，生成token【{token}】", userName, token);
         await _dbContext.SaveChangesAsync();
-        return ApiResult.True(new { token });
+        return ApiResult.True(new { token, user.JwtVersion });
     }
 
 
