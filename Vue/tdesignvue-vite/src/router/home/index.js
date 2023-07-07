@@ -1,0 +1,28 @@
+const router = [
+    {
+        path: "/home",
+        name: "home",
+        component: () => import('@/views/home/index.vue')
+    },
+    {
+        path: "/user",
+        name: "user",
+        component: () => import('@/views/user/index.vue')
+    },
+    {
+        path: "/order",
+        name: "order",
+        component: () => import('@/views/order/index.vue')
+    },
+    {
+        path: "/role",
+        name: "role",
+        component: () => import('@/views/role/index.vue')
+    },
+    {
+        path: "/module",
+        name: "module",
+        component: () => import('@/views/module/index.vue')
+    },
+];
+export default router;

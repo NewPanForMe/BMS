@@ -1,15 +1,11 @@
 <template>
-    <div >
-        user
-    </div>
+    <div>user</div>
 </template>
 <script>
 export default {
-    data(){
-        return {
-        }
+    data() {
+        return {};
     },
-    watch:{
-    }
-}
+    watch: {},
+};
 </script>

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using BMS_Db.BLL;
+using BMS_Db.BLL.User;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Authorization;

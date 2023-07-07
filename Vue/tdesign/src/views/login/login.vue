@@ -46,14 +46,14 @@ export default {
             console.log(this.$instance)
             console.log(this.$api)
             console.log(this.$cookies)
-            this.$instance.post(this.$api.login.checkUserName, this.form.user).then(resp => {
-                console.log(resp)
-                const token  = resp.result.token;
-                const jwtVersion  = resp.result.jwtVersion;
-                cookie.saveToken(token);
-                cookie.saveJwtVersion(jwtVersion);
-                this.$router.push("/index")
-            })
+            // this.$instance.post(this.$api.login.checkUserName, this.form.user).then(resp => {
+            //     console.log(resp)
+            //     const token  = resp.result.token;
+            //     const jwtVersion  = resp.result.jwtVersion;
+            //     cookie.saveToken(token);
+            //     cookie.saveJwtVersion(jwtVersion);
+            this.$router.push("/index")
+            // })
 
 
         },

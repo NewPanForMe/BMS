@@ -12,24 +12,24 @@ using Ys.Tools.Interface;
 using Ys.Tools.MoreTool;
 using Ys.Tools.Response;
 
-namespace BMS_Db.BLL;
+namespace BMS_Db.BLL.User;
 
 
-public  class UserBll : IBll
+public class UserBll : IBll
 {
     private readonly BmsV1DbContext _dbContext;
     private readonly ILogger<UserBaseBll> _logger;
     private readonly IMemoryCache _memoryCache;
 
 
-    
+
     public UserBll(BmsV1DbContext dbContext, ILogger<UserBaseBll> logger, IMemoryCache memoryCache)
     {
         _dbContext = dbContext;
         _logger = logger;
         _memoryCache = memoryCache;
     }
- 
+
     /// <summary>
     /// 登录校验
     /// </summary>
@@ -48,7 +48,7 @@ public  class UserBll : IBll
             user.ErrorCount += 1;
             if (user.ErrorCount == 3)
             {
-                user.IsLock=true;
+                user.IsLock = true;
                 user.ErrorCancelTime = DateTime.Now.AddMinutes(SystemConfig.Instance.ErrorCount);
                 await _dbContext.SaveChangesAsync();
                 _logger.LogWarning("{userName}账户锁定，锁定时长：{ SystemConfig.Instance.ErrorCount}分钟", userName, SystemConfig.Instance.ErrorCount);
@@ -59,7 +59,7 @@ public  class UserBll : IBll
             return ApiResult.False("账户密码不正确");
         }
         user.JwtVersion++;
-        user.ErrorCount= 0;
+        user.ErrorCount = 0;
         var listClaims = new List<Claim>()
         {
             new(ClaimTypes.Name,user.Name ?? user.LoginName),

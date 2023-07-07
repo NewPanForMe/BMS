@@ -12,9 +12,9 @@ public class JwtVersionMiddleWare
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var pwd = context.Request.Query["password"];
-          
-            await _next(context);
-        
+        var pwd = context.Request.Headers["JwtVersion"];
+     if(!string.IsNullOrEmpty(pwd)) Console.WriteLine($"JwtVersion={pwd}");
+        await _next(context);
+
     }
 }

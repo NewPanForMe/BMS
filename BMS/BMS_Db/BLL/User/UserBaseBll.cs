@@ -1,16 +1,14 @@
 ﻿using BMS_Db.EfContext;
-using BMS_Models.DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Ys.Tools.Interface;
 using Ys.Tools.Response;
-
-namespace BMS_Db.BLL;
+namespace BMS_Db.BLL.User;
 
 /// <summary>
 /// User基础操作类-增删改查
 /// </summary>
-public class UserBaseBll:IBll
+public class UserBaseBll : IBll
 {
     private readonly BmsV1DbContext _dbContext;
     private readonly ILogger<UserBaseBll> _logger;
@@ -25,7 +23,7 @@ public class UserBaseBll:IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Add(User user)
+    public void Add(BMS_Models.DbModels.User user)
     {
         user.JwtVersion = 1;
         _dbContext.User.Add(user);
@@ -37,7 +35,7 @@ public class UserBaseBll:IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Edit(User user)
+    public void Edit(BMS_Models.DbModels.User user)
     {
         _dbContext.User.Update(user);
         _logger.LogWarning("修改用户：{user}", user);
@@ -49,10 +47,10 @@ public class UserBaseBll:IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Delete(User user)
+    public void Delete(BMS_Models.DbModels.User user)
     {
         user.IsDelete = true;
-        _dbContext.User.Remove(user);
+        _dbContext.User.Update(user);
         _logger.LogWarning("删除用户：{user}", user);
 
     }

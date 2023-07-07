@@ -3,7 +3,7 @@
         <t-layout>
             <t-aside>
                 <t-menu>
-                    <t-menu-item :to="list" >
+                    <t-menu-item  href="/user">
                         <template #icon>
                             <t-icon name="app" />
                         </template>
@@ -23,7 +23,7 @@
                             <t-icon name="file" />
                         </template>
                         <t-submenu value="2-1" title="二级菜单-1">
-                            <t-menu-item value="3-1">三级菜单-1</t-menu-item>
+                            <t-menu-item value="3-1" to="homepage">三级菜单-1</t-menu-item>
                             <t-menu-item value="3-2">三级菜单-2</t-menu-item>
                             <t-menu-item value="3-3">三级菜单-3</t-menu-item>
                         </t-submenu>
@@ -36,13 +36,9 @@
             <t-layout>
                 <t-header>Header</t-header>
                 <t-content>
-                    <div class="layout-content-top">
-                        <t-tag variant="outline" theme="primary" closable>标签一</t-tag>
-                        <t-tag variant="outline" theme="success" closable>标签二</t-tag>
-                        <t-tag variant="outline" theme="warning" closable>标签三</t-tag>
-                        <t-tag variant="outline" theme="danger" closable>标签四</t-tag>
+                    <div class="layout-content">
+                        <router-view></router-view>
                     </div>
-                    <router-view ></router-view>
                 </t-content>
                 <t-footer>Copyright @ 2022-{{ new Date().getFullYear() }} Ys.BMS All Rights Reserved</t-footer>
             </t-layout>
@@ -50,28 +46,24 @@
     </div>
 </template>
 <script>
-import { RouterView } from 'vue-router'
+import { RouterView } from "vue-router";
 export default {
-
     components: { RouterView },
     data() {
         return {
-            list: "user"
-        }
-    },
-    watch: {
-        $route(to, from) {
-            console.log(to)
-            console.log(from)
-        }
+            list: "user",
+            route:{
+                "user":"/user"
+            }
+        };
     },
     methods: {
         onChange(x) {
-            console.log(x)
+            console.log(x);
         },
         click(x) {
-            console.log(x)
+            console.log(x);
         },
-    }
-}
+    },
+};
 </script>
