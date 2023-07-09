@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 using Ys.Tools.Interface;
 using Ys.Tools.Response;
 using BMS_Models.DbModels;
+using Microsoft.IdentityModel.Tokens;
+using Ys.Tools.Extra;
+
 namespace BMS_Db.BLL.Module;
 
 public class ModuleBll:IBll
@@ -48,21 +51,33 @@ public class ModuleBll:IBll
     /// <returns></returns>
     public void Delete(BMS_Models.DbModels.Module module)
     {
-
         _dbContext.Module.Remove(module);
         _logger.LogWarning("删除模块：{module}", module);
-
     }
 
     /// <summary>
     /// 获取模块
     /// </summary>
     /// <returns></returns>
-    public async Task<ApiResult> GetModules()
+    public async Task<List<BMS_Models.DbModels.Module>> GetModules()
     {
         var listAsync = await _dbContext.Module.ToListAsync();
-        _logger.LogWarning("获取用户列表：{user}", listAsync.Count);
-        return ApiResult.True(listAsync);
+        _logger.LogWarning("获取模块列表：{user}", listAsync.Count);
+        return listAsync;
     }
 
+
+
+    /// <summary>
+    /// 获取模块
+    /// </summary>
+    /// <returns></returns>
+    public  BMS_Models.DbModels.Module GetModuleEntityByCode(string code)
+    {
+        code.NotNull("传入编号为空");
+        var module =  _dbContext.Module.FirstOrDefault(x=>x.Code.Equals(code));
+        module = module.NotNull("当前数据不存在");
+        _logger.LogWarning("获取模块{code}：{module}", code, module);
+        return module;
+    }
 }

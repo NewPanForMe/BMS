@@ -32,5 +32,4 @@ namespace BMS.Controllers
             return _userBll.CheckAsync(userName, password);
         }
     }
-
 }

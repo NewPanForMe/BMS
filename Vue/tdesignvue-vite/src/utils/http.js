@@ -1,14 +1,15 @@
 //通讯组件
 import axios from "axios";
+import router from '../router/router'
 import cookie from "./cookies";
 import { MessagePlugin } from "tdesign-vue-next";
 const instance = axios.create({
     //默认url
     baseURL: "/BmsV1Service",
-    timeout: 5000,
 });
 //统一设置post请求头
 instance.defaults.headers.post["Content-Type"] = "application/json";
+instance.defaults.headers.get["Content-Type"] = "application/json";
 //添加请求拦截器
 instance.interceptors.request.use(
     (config) => {
@@ -17,7 +18,7 @@ instance.interceptors.request.use(
         var token = cookie.getToken();
         if (token) {
             //存在,放入请求头
-            config.headers.Authorization = "Bearer " + token.token;
+            config.headers.Authorization = "Bearer " + token.tokenName;
             config.headers.JwtVersion = token.jwtVersion;
         }
         return config;
@@ -31,21 +32,24 @@ instance.interceptors.request.use(
 //添加resp拦截器
 instance.interceptors.response.use(
     (resp) => {
+        console.log(resp)
         //如果返回的结果为true
         if (resp.data.success == true) {
-            if (resp.data.result != null) {
+            if (resp.data != null) {
                 return resp.data;
             }
-        } else if (resp.data.result == "401") {
-            this.$router.push("/login");
-            cookie.removeToken();
-        } else {
+        }else {
             MessagePlugin.error(resp.data.result);
         }
         return Promise.reject(resp.data.message);
     },
     (error) => {
         console.log(error);
+        if(error.response.status=="401"){
+            MessagePlugin.error("无权限");
+            router.replace("/");
+            cookie.removeToken();
+        }
     }
 );
 export default instance;

@@ -94,7 +94,6 @@ public class Startup
         //这是为了确保 CORS 标头包含在已授权和未经授权的调用的响应中。
         app.UseCors("AllowAllOrigin");
         app.UseAuthentication();
-
         app.UseAuthorization();
         app.UseResponseCaching();
         app.UseMiddleware<ExceptionMiddleWare>();

@@ -4,6 +4,7 @@ using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Ys.Tools.Controllers;
 using Ys.Tools.Response;
 
 namespace BMS.Controllers
@@ -11,17 +12,14 @@ namespace BMS.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class ModuleController : ControllerBase
+    public class ModuleController : BaseController
     {
 
         private readonly BmsV1DbContext _dbContext;
         private readonly ModuleBll _moduleBll;
-        private readonly ILogger<ModuleController> _logger;
-
-        public ModuleController(BmsV1DbContext dbContext, ILogger<ModuleController> logger, ModuleBll moduleBll)
+        public ModuleController(BmsV1DbContext dbContext, ModuleBll moduleBll)
         {
             _dbContext = dbContext;
-            _logger = logger;
             _moduleBll = moduleBll;
         }
 
@@ -29,6 +27,7 @@ namespace BMS.Controllers
         [HttpPost]
         public async Task<ApiResult> Add(Module module)
         {
+            module.Code=Guid.NewGuid().ToString();
             _moduleBll.Add(module);
            await _dbContext.SaveChangesAsync();
            return ApiResult.True();
@@ -53,7 +52,21 @@ namespace BMS.Controllers
         [HttpGet]
         public async Task<ApiResult> GetList()
         {
-            return await _moduleBll.GetModules();
+            var data = await _moduleBll.GetModules();
+            var pagination = new Pagination()
+            {
+                DefaultPageSize = 10,//默认多少条
+                DefaultCurrent = 1,
+                Total = data.Count
+            };
+            return ApiResult.True(new { data, pagination });
+        }
+
+        [HttpGet]
+        public  ApiResult GetEntityByCode(string code)
+        {
+            var data =  _moduleBll.GetModuleEntityByCode(code);
+            return ApiResult.True(new { data });
         }
     }
 }

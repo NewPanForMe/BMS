@@ -1,8 +1,5 @@
-import loginApi from './login/index'
-import userApi from './user/index'
-
+import allApi from './home/index'
 const api = {
-    ...loginApi,
-    ...userApi
+    ...allApi,
 }
 export default api

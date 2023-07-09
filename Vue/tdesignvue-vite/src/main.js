@@ -15,6 +15,12 @@ import 'tdesign-vue-next/es/style/index.css';
 var app=createApp(App)
 app.use(TDesign)
 app.use(router)
+
+app.provide('$message', MessagePlugin)
+app.provide('$instance', instance)
+app.provide('$cookies', cookies)
+app.provide('$api', api)
+
 app.config.globalProperties.$message = MessagePlugin;
 app.config.globalProperties.$instance = instance;
 app.config.globalProperties.$cookies = cookies;
