@@ -57,20 +57,20 @@ body {
     margin: 10px;
     background-color: white;
     color: #000;
-    height: 83vh;
+    /*     height: 82vh; */
+    height: 86vh;
     border-radius: 10px;
     padding: 5px;
 }
 
-.layout   .layout-content-top{
+/* .layout   .layout-content-top{
     height: 3vh;
     background-color: rgb(221, 217, 217);
     padding: 5px 4px 0px 8px;
-    
-}
+} */
 .layout  .layout-content .content-top{
     background-color: white;
-    padding: 5px;
+    padding: 0px 0px 10px 0px;
     height: 3vh;
 }
 

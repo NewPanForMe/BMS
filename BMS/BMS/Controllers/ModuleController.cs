@@ -1,10 +1,12 @@
-﻿using BMS_Db.BLL.Module;
+﻿using System.Text.Json;
+using BMS_Db.BLL.Module;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ys.Tools.Controllers;
+using Ys.Tools.Extra;
 using Ys.Tools.Response;
 
 namespace BMS.Controllers
@@ -50,10 +52,10 @@ namespace BMS.Controllers
         }
 
         [HttpGet]
-        public async Task<ApiResult> GetList()
+        public async Task<ApiResult> GetList(string? value)
         {
-            var data = await _moduleBll.GetModules();
-            var pagination = new Pagination()
+            var data = await _moduleBll.GetModules(value??"");
+            var pagination = new Pagination()   
             {
                 DefaultPageSize = 10,//默认多少条
                 DefaultCurrent = 1,

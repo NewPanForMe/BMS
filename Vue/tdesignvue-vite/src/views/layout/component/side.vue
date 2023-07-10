@@ -1,6 +1,6 @@
 <template>
     <t-menu>
-        <template v-for="item in menulist">
+        <template v-for="item in menu">
             <template v-if="item.child.length == 0">
                 <t-menu-item value="{{ item.value }}" :to="item.path" :content="item.meta.title" :change="onMenuClick">
                     <template #icon>
@@ -26,7 +26,7 @@
         </template>
     </t-menu>
 </template>
-<script>
+<script setup>
 const menu = [
     {
         path: "",
@@ -83,19 +83,4 @@ const menu = [
         child: [],
     },
 ];
-export default {
-    data() {
-        return {
-            menulist:menu,
-        };
-    },
-    watch:{
-    },
-    methods:{
-        onMenuClick(e){
-            console.log(e)
-
-        }
-    }
-};
 </script>

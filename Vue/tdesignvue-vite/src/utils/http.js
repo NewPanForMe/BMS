@@ -1,7 +1,8 @@
 //通讯组件
 import axios from "axios";
-import router from '../router/router'
+import router from "../router/router";
 import cookie from "./cookies";
+import api from "../api/index";
 import { MessagePlugin } from "tdesign-vue-next";
 const instance = axios.create({
     //默认url
@@ -24,31 +25,40 @@ instance.interceptors.request.use(
         return config;
     },
     (error) => {
-        layer.msg(error);
         console.log(error);
-        return;
+        return Promise.reject(error);
     }
 );
 //添加resp拦截器
 instance.interceptors.response.use(
     (resp) => {
-        console.log(resp)
+        console.log(resp);
         //如果返回的结果为true
         if (resp.data.success == true) {
             if (resp.data != null) {
                 return resp.data;
             }
-        }else {
+        } else {
             MessagePlugin.error(resp.data.result);
         }
+
         return Promise.reject(resp.data.message);
     },
     (error) => {
         console.log(error);
-        if(error.response.status=="401"){
-            MessagePlugin.error("无权限");
-            router.replace("/");
-            cookie.removeToken();
+        if (error.response.status == "401") {
+            let refreshToken = cookie.getRefreshToken();
+            instance
+                .post(api.refreshToken.RefreshToken, {
+                    token: refreshToken,
+                })
+                .then((resp) => {
+                    console.log(resp);
+                    cookie.removeToken();
+                    const token = resp.result.token;
+                    const jwtVersion = resp.result.jwtVersion;
+                    cookie.saveToken(token, jwtVersion);
+                });
         }
     }
 );

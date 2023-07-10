@@ -53,7 +53,9 @@ export default {
                 console.log(resp);
                 const token = resp.result.token;
                 const jwtVersion = resp.result.jwtVersion;
+                const refreshToken = resp.result.refreshToken;
                 this.$cookies.saveToken(token, jwtVersion);
+                this.$cookies.saveRefreshToken(refreshToken);
                 this.$router.push({ name: "index" });
             });
         },

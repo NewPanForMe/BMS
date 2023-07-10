@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Ys.Base.Tools.xTool;
+using Ys.Tools.Config;
 using Ys.Tools.Exception;
 using Ys.Tools.Extra;
 using Ys.Tools.Interface;
@@ -66,14 +67,44 @@ public class UserBll : IBll
             new (ClaimTypes.NameIdentifier,user.Id.ToString()),
             new (ClaimTypes.Version,user.JwtVersion.ToString()),
             new ("UserCode",user.Code),
-            new ("ExpireTime",DateTime.Now.AddMinutes(20).ToString("yyyy/MM/dd HH:mm:ss")),
+            new ("ExpireTime",DateTime.Now.AddMinutes(TokenConfig.Instance.AccessExpires).ToString("yyyy/MM/dd HH:mm:ss")),
         };
         var token = TokenTools.Create(listClaims);
-        _logger.LogWarning("{userName}登录成功，生成token【{token}】", userName, token);
+         listClaims = new List<Claim>()
+        {
+            new(ClaimTypes.Name,user.Name ?? user.LoginName),
+            new (ClaimTypes.NameIdentifier,user.Id.ToString()),
+            new (ClaimTypes.Version,user.JwtVersion.ToString()),
+            new ("UserCode",user.Code),
+            new ("ExpireTime",DateTime.Now.AddHours(TokenConfig.Instance.RefreshToken).ToString("yyyy/MM/dd HH:mm:ss")),
+        };
+        var refreshToken = TokenTools.CreateRefreshToken(listClaims);
+        _logger.LogWarning("{userName}登录成功，生成token【{token}】,refreshToken【{refreshToken}】", userName, token, refreshToken);
+        await _dbContext.SaveChangesAsync();
+        return ApiResult.True(new { token, user.JwtVersion, refreshToken });
+    }
+
+    /// <summary>
+    /// 用于重新生成token
+    /// </summary>
+    public async Task<ApiResult> GenerateToken(string userCode)
+    {
+        var user =  _dbContext.User.FirstOrDefault(x => x.Code == userCode);
+        user = user.NotNull($"用户{userCode}不存在");
+        user.JwtVersion++;
+        user.ErrorCount = 0;
+        var listClaims = new List<Claim>()
+        {
+            new(ClaimTypes.Name,user.Name ?? user.LoginName),
+            new (ClaimTypes.NameIdentifier,user.Id.ToString()),
+            new (ClaimTypes.Version,user.JwtVersion.ToString()),
+            new ("UserCode",user.Code),
+            new ("ExpireTime",DateTime.Now.AddMinutes(TokenConfig.Instance.AccessExpires).ToString("yyyy/MM/dd HH:mm:ss")),
+        };
+        var token = TokenTools.Create(listClaims);
+        _logger.LogWarning("{userCode}刷新token成功，生成token【{token}】", userCode, token);
         await _dbContext.SaveChangesAsync();
         return ApiResult.True(new { token, user.JwtVersion });
     }
-
-
 
 }

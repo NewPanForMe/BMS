@@ -7,10 +7,11 @@ using Ys.Tools.Response;
 using BMS_Models.DbModels;
 using Microsoft.IdentityModel.Tokens;
 using Ys.Tools.Extra;
+using Consul;
 
 namespace BMS_Db.BLL.Module;
 
-public class ModuleBll:IBll
+public class ModuleBll : IBll
 {
     private readonly BmsV1DbContext _dbContext;
     private readonly ILogger<ModuleBll> _logger;
@@ -41,7 +42,6 @@ public class ModuleBll:IBll
     {
         _dbContext.Module.Update(module);
         _logger.LogWarning("修改模块：{module}", module);
-
     }
 
     /// <summary>
@@ -58,12 +58,22 @@ public class ModuleBll:IBll
     /// <summary>
     /// 获取模块
     /// </summary>
+    /// <param name="value">值</param>
     /// <returns></returns>
-    public async Task<List<BMS_Models.DbModels.Module>> GetModules()
+    public async Task<List<BMS_Models.DbModels.Module>> GetModules(string value)
     {
         var listAsync = await _dbContext.Module.ToListAsync();
-        _logger.LogWarning("获取模块列表：{user}", listAsync.Count);
-        return listAsync;
+        var newList = new List<BMS_Models.DbModels.Module>();
+        if (!string.IsNullOrEmpty(value))
+        {
+            newList = listAsync.Where(x => x.ParentCode == value).ToList();
+        }
+        else
+        {
+            newList = listAsync;
+        }
+        _logger.LogWarning("获取模块列表：{newList}", newList.Count);
+        return newList;
     }
 
 
@@ -72,12 +82,50 @@ public class ModuleBll:IBll
     /// 获取模块
     /// </summary>
     /// <returns></returns>
-    public  BMS_Models.DbModels.Module GetModuleEntityByCode(string code)
+    public BMS_Models.DbModels.Module GetModuleEntityByCode(string code)
     {
         code.NotNull("传入编号为空");
-        var module =  _dbContext.Module.FirstOrDefault(x=>x.Code.Equals(code));
+        var module = _dbContext.Module.FirstOrDefault(x => x.Code.Equals(code));
         module = module.NotNull("当前数据不存在");
         _logger.LogWarning("获取模块{code}：{module}", code, module);
         return module;
     }
+
+
+
+    /// <summary>
+    /// 获取Module的树型图
+    /// </summary>
+    public async Task<List<Tree>> GetTreeNode()
+    {
+        var listAsync = await _dbContext.Module.ToListAsync();
+        var trees = GetTree(listAsync, "father");
+        _logger.LogWarning("获取模块树结构：{module}", trees.Count);
+        return trees;
+    }
+
+    /// <summary>
+    /// 节点详细处理
+    /// </summary>
+    /// <param name="miModules"></param>
+    /// <param name="value"></param>
+    private List<Tree> GetTree(List<BMS_Models.DbModels.Module> miModules, string value)
+    {
+        var list = new List<Tree>();
+        var modules = miModules.Where(x => x.ParentCode == value).ToList();
+        modules.ForEach(module =>
+        {
+            var tree = new Tree()
+            {
+                Label = module.Name,
+                Value = module.Value,
+                Children = new List<Tree>()
+            };
+            var modules1 = miModules.Where(x => x.ParentCode == module.Value).ToList();
+            tree.Children.AddRange(GetTree(miModules, module.Value));
+            list.Add(tree);
+        });
+        return list;
+    }
+
 }
