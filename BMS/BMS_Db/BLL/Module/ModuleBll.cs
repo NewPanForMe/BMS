@@ -64,14 +64,15 @@ public class ModuleBll : IBll
     {
         var listAsync = await _dbContext.Module.ToListAsync();
         var newList = new List<BMS_Models.DbModels.Module>();
-        if (!string.IsNullOrEmpty(value))
-        {
-            newList = listAsync.Where(x => x.ParentCode == value).ToList();
-        }
-        else
+        if (string.IsNullOrEmpty(value))
         {
             newList = listAsync;
         }
+        else
+        {
+            newList = listAsync.Where(x => x.ParentCode == value).ToList();
+        }
+
         _logger.LogWarning("获取模块列表：{newList}", newList.Count);
         return newList;
     }
@@ -121,9 +122,45 @@ public class ModuleBll : IBll
                 Value = module.Value,
                 Children = new List<Tree>()
             };
-            var modules1 = miModules.Where(x => x.ParentCode == module.Value).ToList();
             tree.Children.AddRange(GetTree(miModules, module.Value));
             list.Add(tree);
+        });
+        return list;
+    }
+
+
+    /// <summary>
+    /// 生成Menu
+    /// </summary>
+    public async Task<List<Menu>> GetMenuNode()
+    {
+        var listAsync = await _dbContext.Module.ToListAsync();
+        var menus = GetMenu(listAsync,"root");
+        _logger.LogWarning("获取菜单：{menus}", menus.Count);
+        return menus;
+    }
+    /// <summary>
+    /// Menu详细处理
+    /// </summary>
+    /// <param name="miModules"></param>
+    /// <param name="value"></param>
+    private List<Menu> GetMenu(List<BMS_Models.DbModels.Module> miModules, string value)
+    {
+        var list = new List<Menu>();
+        var modules = miModules.Where(x => x.ParentCode == value).ToList();
+        modules.ForEach(module =>
+        {
+            var menu = new Menu()
+            {
+                Name = module.Name,
+                Value = module.Value,
+                Child = new List<Menu>(),
+                Icon = module.Icon,
+                Meta = new Meta(){Title = module.Name},
+                Path = module.Path,
+            };
+            menu.Child.AddRange(GetMenu(miModules, module.Value));
+            list.Add(menu);
         });
         return list;
     }

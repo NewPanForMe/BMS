@@ -48,10 +48,10 @@
             <t-form-item label="父节点" name="ParentCode">
                 <t-input placeholder="当前父节点" :readonly="true" v-model="data.ParentCode" />
             </t-form-item>
-            <t-form-item label="是否展示" name="IsShow"  >
-                <t-select v-model="data.IsShow" v-model:value="data.IsShow">
-                    <t-option key="true" label="是true" value="true" />
-                    <t-option key="false" label="否false" value="false" />
+            <t-form-item label="是否展示" name="IsShow"  v-model="data.IsShow" >
+                <t-select  >
+                    <t-option key="true" label="是" value="true" />
+                    <t-option key="false" label="否" value="false" />
                 </t-select>
             </t-form-item>
             <t-input hidden :readonly="true" v-model="data.Code" />

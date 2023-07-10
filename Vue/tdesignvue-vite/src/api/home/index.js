@@ -17,6 +17,12 @@ const api = {
     },
     tree:{
         GetModuleTreeNode: window.config.baseUrl + "/Tree/ModuleTree",
+    },
+    menu:{
+        GetMenu: window.config.baseUrl + "/Menu/Menu",
+    },
+    log:{
+        GetLogList:window.config.baseUrl + "/NLog/GetLogList",
     }
 }
 export default api

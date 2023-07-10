@@ -24,5 +24,10 @@ const router = [
         name: "module",
         component: () => import('@/views/module/index.vue')
     },
+    {
+        path: "/log",
+        name: "log",
+        component: () => import('@/views/log/index.vue')
+    },
 ];
 export default router;

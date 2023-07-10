@@ -57,7 +57,7 @@ namespace BMS.Controllers
             var data = await _moduleBll.GetModules(value??"");
             var pagination = new Pagination()   
             {
-                DefaultPageSize = 10,//默认多少条
+                DefaultPageSize = 5,//默认多少条
                 DefaultCurrent = 1,
                 Total = data.Count
             };

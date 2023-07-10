@@ -20,10 +20,11 @@ public class TreeController : BaseController
         _moduleBll = moduleBll;
     }
     #region Module
-    [HttpPost]
+    [HttpGet]
     public async Task<ApiResult> ModuleTree()
     {
         var treeNode =await _moduleBll.GetTreeNode();
+        await _dbContext.SaveChangesAsync();
         return ApiResult.True(new { treeNode });
     }
 

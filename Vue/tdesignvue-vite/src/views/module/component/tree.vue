@@ -8,7 +8,7 @@ import $api from "@/api/index";
 let items = ref([]);
 const emit = defineEmits(["ClickNode"]);
 const GetModule = ()=>{
-    $instance.post($api.tree.GetModuleTreeNode ).then((resp) => {
+    $instance.get($api.tree.GetModuleTreeNode ).then((resp) => {
             items.value = resp.result.treeNode;
     });
 }

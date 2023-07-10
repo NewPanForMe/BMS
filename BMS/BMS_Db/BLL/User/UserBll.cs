@@ -90,7 +90,7 @@ public class UserBll : IBll
     public async Task<ApiResult> GenerateToken(string userCode)
     {
         var user =  _dbContext.User.FirstOrDefault(x => x.Code == userCode);
-        user = user.NotNull($"用户{userCode}不存在");
+        user = user.NotNull($"用户{user?.LoginName}不存在");
         user.JwtVersion++;
         user.ErrorCount = 0;
         var listClaims = new List<Claim>()
@@ -102,7 +102,7 @@ public class UserBll : IBll
             new ("ExpireTime",DateTime.Now.AddMinutes(TokenConfig.Instance.AccessExpires).ToString("yyyy/MM/dd HH:mm:ss")),
         };
         var token = TokenTools.Create(listClaims);
-        _logger.LogWarning("{userCode}刷新token成功，生成token【{token}】", userCode, token);
+        _logger.LogWarning("{userCode}刷新token成功，生成token【{token}】", user.LoginName, token);
         await _dbContext.SaveChangesAsync();
         return ApiResult.True(new { token, user.JwtVersion });
     }
