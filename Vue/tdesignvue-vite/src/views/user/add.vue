@@ -1,67 +1,64 @@
 <template>
     <div class="add">
-        <t-form ref="form" :rules="FORM_RULES" :data="formData" 
-        :colon="true" @reset="onReset" @submit="onSubmit">
-            <t-form-item label="姓名" name="name">
-                <t-input v-model="formData.name" placeholder="请输入内容" @enter="onEnter"></t-input>
+        <t-form ref="form" :rules="FORM_RULES" :data="formData" :colon="true" @reset="onReset" @submit="onSubmit">
+            <t-form-item label="登录账号" name="LoginName">
+                <t-input v-model="formData.LoginName" placeholder="请输入登录账号" @enter="onEnter"></t-input>
             </t-form-item>
-
-            <t-form-item label="手机号码" name="tel">
-                <t-input v-model="formData.tel" placeholder="请输入内容" @enter="onEnter"></t-input>
+            <t-form-item label="登录密码" name="LoginPassword">
+                <t-input v-model="formData.LoginPassword" type="password" placeholder="请输入登录密码" @enter="onEnter"></t-input>
             </t-form-item>
-
-            <t-form-item label="接收短信" name="status">
-                <t-switch v-model="formData.status"></t-switch>
+            <t-form-item label="账号名称" name="Name">
+                <t-input v-model="formData.Name" placeholder="请输入账号名称" @enter="onEnter"></t-input>
             </t-form-item>
-
-            <t-form-item label="性别" name="gender">
-                <t-radio-group v-model="formData.gender">
-                    <t-radio value="1">男</t-radio>
-                    <t-radio value="2">女</t-radio>
-                </t-radio-group>
+            <t-form-item label="是否删除" name="IsDelete">
+                <t-select v-model="formData.IsDelete2">
+                    <t-option key="true" label="是" value="true" />
+                    <t-option key="false" label="否" value="false" />
+                </t-select>
             </t-form-item>
-
-            <t-form-item label="课程" name="course">
-                <t-checkbox-group v-model="formData.course" :options="courseOptions"></t-checkbox-group>
-            </t-form-item>
-
             <t-form-item>
                 <t-space size="small">
                     <t-button theme="primary" type="submit">提交</t-button>
                     <t-button theme="default" variant="base" type="reset">重置</t-button>
-                <t-button theme="default" @click="submitForm">实例方法提交</t-button>
-                   <t-button theme="default" variant="base" @click="resetForm">实例方法重置</t-button>
-                 <t-button theme="default" variant="base" @click="validateOnly">仅校验</t-button>
-                 <t-button theme="default" variant="base" @click="back">返回</t-button>
+                    <t-button theme="default" variant="base" @click="back">返回</t-button>
                 </t-space>
             </t-form-item>
+            <t-input v-model="formData.Code"  hidden></t-input>
+            <t-input v-model="formData.Id"  hidden></t-input>
         </t-form>
     </div>
 </template>
 <script setup>
+import $instance from "@/utils/http";
+import $api from "@/api/index";
 import $router from '@/router/router'
-import { ref, reactive } from "vue";
+import {useRouter} from 'vue-router'
+import { ref, reactive ,getCurrentInstance} from "vue";
 import { MessagePlugin } from "tdesign-vue-next";
-
-const FORM_RULES = { name: [{ required: true, message: "姓名必填" }] };
+// 获取当前路径的code和类型
+const route= useRouter()
+const code=route.currentRoute.value.params.code
+const type=route.currentRoute.value.params.type
+const FORM_RULES = { 
+    LoginName: [{ required: true, message: "登录名称必填" }] ,
+    LoginPassword:[{ required: true, message: "登录密码必填" }],
+    Name:[{ required: true, message: "账号名称必填" }],
+    IsDelete:[{ required: true, message: "请选择是否删除" }]
+};
 
 const formData = reactive({
-    name: "",
-    tel: "",
-    gender: "",
-    course: [],
-    status: false,
+    Id: 0,
+    Code: "",
+    Name: "",
+    LoginName: "",
+    LoginPassword: "",
+    IsDelete: false,
+    IsDelete2: "false",
 });
 const form = ref(null);
 
-const courseOptions = [
-    { label: "语文", value: "1" },
-    { label: "数学", value: "2" },
-    { label: "英语", value: "3" },
-];
-
 const back = () => {
-    $router.push("/user")
+    $router.go(-1)
 };
 
 const onReset = () => {
@@ -69,20 +66,55 @@ const onReset = () => {
 };
 
 const onSubmit = ({ validateResult, firstError }) => {
-    console.log( "2,执行了onSubmit")
+    console.log(formData)
     if (validateResult === true) {
-        MessagePlugin.success("提交成功");
+        let url=""
+        if(type=="add") url=$api.user.Add
+        if(type=="edit") url=$api.user.Edit
+        formData.IsDelete = JSON.parse(formData.IsDelete2)
+        $instance.post(url, formData).then((resp) => {
+            if (resp.success) {
+                MessagePlugin.success("成功");
+                $router.push("/user")
+            }
+        });
     } else {
         console.log("Validate Errors: ", firstError, validateResult);
         MessagePlugin.warning(firstError);
     }
 };
+const getTableEntity = () => {
+    if(type=="edit"){
+        $instance
+        .get($api.user.GetEntityByCode, {
+            params: {
+                code: code,
+            },
+        })
+        .then((resp) => {
+            formData.Code=resp.result.data.code
+            formData.Id=resp.result.data.id
+            formData.IsDelete=resp.result.data.isDelete
+            formData.IsDelete2=resp.result.data.isDelete.toString()
+            formData.LoginName=resp.result.data.loginName
+            formData.Name=resp.result.data.name
+           console.log(resp.result.data)
+           console.log(formData)
+        });
+    }
+};
+
+getTableEntity();
+
+
+
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const submitForm = async () => {
-    console.log( "1,执行了submitForm")
-    console.log( form.value)
-   // form.value.submit();
+    console.log("1,执行了submitForm")
+    console.log(form.value)
+    // form.value.submit();
     form.value.submit({ showErrorMessage: true });
 
     // 校验数据，代码有效，勿删

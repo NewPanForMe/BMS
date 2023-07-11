@@ -1,36 +1,28 @@
 <template>
-    <t-table
-        row-key="index"
-        :data="list.data"
-        :columns="columns"
-        bordered
-        hover
-        table-layout="fixed"
-        size="small"
-        :pagination="list.pagination"
-        cell-empty-content="-"
-        resizable
-        @row-click="handleRowClick"
-    >
+    <t-table row-key="index" :data="list.data" :columns="columns" bordered hover table-layout="fixed" size="small"
+        :pagination="list.pagination" cell-empty-content="-" resizable @row-click="handleRowClick" :loading="loading"
+        :refreshTable="refreshTable">
     </t-table>
 </template>
 <script setup lang="jsx">
 import $instance from "@/utils/http";
-import {  reactive } from "vue";
-var prop=defineProps({
+import { ref } from "vue";
+let list = {
+    pagination: { defaultCurrent: 1, defaultPageSize: 5, total: 0 },
+    data: [],
+}
+var prop = defineProps({
     columns: [],
-    listUrl:String,
-    list:{
-        pagination: { defaultCurrent: 1, defaultPageSize: 5, total: 0 },
-        data: [],
-    }
+    listUrl: String,
 })
-const emit = defineEmits(["rowClick"]);
+const loading = ref(false)
+const emit = defineEmits(["rowClick", "refreshTable"]);
 const getTableList = () => {
-    console.log(prop.listUrl)
+    loading.value = !loading.value
     $instance.get(prop.listUrl).then((resp) => {
-        prop.list.data = resp.result.data;
-        prop.list.pagination = resp.result.pagination;
+        loading.value = !loading.value
+        list.data = resp.result.data;
+        list.pagination = resp.result.pagination;
     });
 };
 getTableList();

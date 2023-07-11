@@ -13,6 +13,7 @@
                 </t-card>
             </t-col>
             <t-col :span="10">
+                
                 <t-table
                     row-key="index"
                     :data="list.data"
@@ -64,6 +65,7 @@ import $api from "@/api/index";
 import { ref, reactive, defineComponent } from "vue";
 import icon from "./component/icon.vue";
 import tree from "./component/tree.vue";
+import baseTable from "@/components/table/baseTable.vue";
 import { MessagePlugin } from "tdesign-vue-next";
 import { AddIcon } from "tdesign-icons-vue-next";
 let list = reactive({

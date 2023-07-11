@@ -14,7 +14,6 @@ instance.defaults.headers.get["Content-Type"] = "application/json";
 //添加请求拦截器
 instance.interceptors.request.use(
     (config) => {
-        console.log(config);
         //判断cookie是否存在
         var token = cookie.getToken();
         if (token) {
@@ -33,7 +32,6 @@ instance.interceptors.request.use(
 //添加resp拦截器
 instance.interceptors.response.use(
     (resp) => {
-        console.log(resp);
         //如果返回的结果为true
         if (resp.data.success == true) {
             if (resp.data != null) {

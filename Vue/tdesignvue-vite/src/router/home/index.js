@@ -10,7 +10,7 @@ const router = [
         component: () => import('@/views/user/index.vue')
     },
     {
-        path: "/user_add",
+        path: "/user_add/:type/:code",
         name: "user_add",
         component: () => import('@/views/user/add.vue')
     },
