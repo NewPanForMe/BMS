@@ -10,6 +10,11 @@ const router = [
         component: () => import('@/views/user/index.vue')
     },
     {
+        path: "/user_add",
+        name: "user_add",
+        component: () => import('@/views/user/add.vue')
+    },
+    {
         path: "/order",
         name: "order",
         component: () => import('@/views/order/index.vue')

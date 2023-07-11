@@ -8,7 +8,7 @@
                 首页
             </t-menu-item>
             <template v-if="item.child.length == 0">
-                <t-menu-item value="{{ item.value }}" :to="item.path" :content="item.meta.title" :change="onMenuClick">
+                <t-menu-item value="{{ item.value }}" :to="item.path" :content="item.meta.title" >
                     <template #icon>
                         <t-icon :name="item.icon" />
                     </template>
@@ -20,7 +20,7 @@
                         <t-icon :name="item.icon" />
                     </template>
                     <template v-for="itemChild in item.child">
-                        <t-menu-item :value="itemChild.value" :to="itemChild.path" :change="onMenuClick">
+                        <t-menu-item :value="itemChild.value" :to="itemChild.path">
                             <template #icon>
                                 <t-icon :name="itemChild.icon" />
                             </template>

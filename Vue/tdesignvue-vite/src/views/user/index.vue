@@ -6,20 +6,7 @@
         </t-button>
     </div>
     <div class="content">
-        <t-table
-            row-key="index"
-            :data="list.data"
-            :columns="columns"
-            bordered
-            hover
-            table-layout="fixed"
-            size="small"
-            :pagination="list.pagination"
-            cell-empty-content="-"
-            resizable
-            @row-click="handleRowClick"
-        >
-        </t-table>
+        <baseTable :list="list" :columns="columns" :listUrl="listUrl"  @row-click="handleRowClick" />
     </div>
 
     <t-drawer v-model:visible="visible" :header="drawName" size="medium" :confirmBtn="drawName" :onConfirm="onConfirm" :onCancel="onCancel">
@@ -33,7 +20,6 @@
             <t-form-item label="账号名称" name="Name">
                 <t-input placeholder="请输入账号名称" v-model="data.Name" />
             </t-form-item>
-
             <t-form-item label="是否删除" name="IsDelete">
                 <t-select v-model="data.IsDelete" :data="data.IsDelete">
                     <t-option key="true" label="是" value="true" />
@@ -48,13 +34,16 @@
 <script setup lang="jsx">
 import $instance from "@/utils/http";
 import $api from "@/api/index";
+import $router from '@/router/router'
 import { ref, reactive, defineComponent } from "vue";
 import { MessagePlugin } from "tdesign-vue-next";
 import { AddIcon } from "tdesign-icons-vue-next";
+import baseTable from "@/components/table/baseTable.vue";
 let list = reactive({
     pagination: { defaultCurrent: 1, defaultPageSize: 5, total: 0 },
     data: [],
 });
+const listUrl = $api.user.GetUserList;
 let visible = ref(false);
 let drawName = ref("");
 const columns = [
@@ -105,9 +94,10 @@ const columns = [
     },
 ];
 const adduser = () => {
-    visible.value = true;
-    drawName.value = "新增";
-    data.value.Type = "Add";
+    $router.push("/user_add")
+    // visible.value = true;
+    // drawName.value = "新增";
+    // data.value.Type = "Add";
 };
 const onEdit = (row) => {
     getTableEntity(row.code);
@@ -143,18 +133,12 @@ let data = ref({
     Name: "",
     LoginName: "",
     LoginPassword: "",
-    IsDelete:false,
+    IsDelete: false,
     Type: "",
 });
-const getTableList = () => {
-    $instance.get($api.user.GetUserList).then((resp) => {
-        list.data = resp.result.data;
-        list.pagination = resp.result.pagination;
-    });
+const handleRowClick = (e) => {
+    console.log(e)
 };
-getTableList();
-
-const handleRowClick = (e) => {};
 
 const onConfirm = () => {
     onSubmit();
@@ -221,7 +205,6 @@ const getTableEntity = (entityCode) => {
             data.value.Id = resp.result.data.id;
             data.value.LoginName = resp.result.data.loginName;
             data.value.IsDelete = resp.result.data.isDelete;
-     
         });
 };
 </script>

@@ -23,6 +23,7 @@ body {
     width: 100%;
     height: 100vh;
 }
+/* 登录主题 */
  .login .login-content {
     width: 350px;
     height: 25%;
@@ -35,24 +36,27 @@ body {
     transform: translate(-50%, -50%);
     padding:  5vh 5vh 5px 5vh;
 }
+/* 登录按钮 */
 .login .login-button{
     padding:  5px 5vh 5px 5vh;
 }
+/* 登录主题文字 */
 .login .login-text{
     padding: 0px 0px 30px 0px;
     font-size: 30px;
     text-align: center;
 }
-
+/* 菜单栏 */
 .layout .t-layout__sider{
     height: 100vh;
 }
+/* 底部 */
 .layout .t-layout__footer{
     background-color: rgb(233, 228, 228);
     height: 1vh;
     padding: 15px 15px 20px 15px
 }
-
+/* 主体内容 */
 .layout  .layout-content{
     margin: 10px;
     background-color: white;
@@ -68,20 +72,28 @@ body {
     background-color: rgb(221, 217, 217);
     padding: 5px 4px 0px 8px;
 } */
+/* 列表页新增按钮行 */
 .layout  .layout-content .content-top{
     background-color: white;
     padding: 0px 0px 10px 0px;
     height: 3vh;
 }
-
+/* 头部 */
 .layout .t-layout__header .header{
     background-color: #b1acac;
     height: 56px;
 } 
-
+/* header */
 .layout .t-layout__header .header .header-left{
     float: right;
 } 
+/* 退出按钮部分 */
 .layout .t-layout__header .header .header-left .header-left-logout{
     padding: 11px 10px 0px 0px;
 } 
+/* 新增页 */
+.layout  .layout-content .add{
+    background-color: rgb(253, 253, 253);
+    padding: 10px;
+    width: 60%;
+}

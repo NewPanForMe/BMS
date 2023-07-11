@@ -1,13 +1,9 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import login from './login/index'
-
 import layout from './layout/index'
-
-
 const routers = [
   ...login,
   ...layout,
-
 ]
 
 const router = createRouter({
