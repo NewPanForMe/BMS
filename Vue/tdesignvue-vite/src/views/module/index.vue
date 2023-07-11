@@ -48,8 +48,8 @@
             <t-form-item label="父节点" name="ParentCode">
                 <t-input placeholder="当前父节点" :readonly="true" v-model="data.ParentCode" />
             </t-form-item>
-            <t-form-item label="是否展示" name="IsShow"  v-model="data.IsShow" >
-                <t-select  >
+            <t-form-item label="是否展示" name="IsShow"  >
+                <t-select  v-model="data.IsShow"  >
                     <t-option key="true" label="是" value="true" />
                     <t-option key="false" label="否" value="false" />
                 </t-select>
@@ -209,7 +209,7 @@ const onSubmit = () => {
         MessagePlugin.error("是否展示必填");
         return;
     }
-
+    data.value.IsShow = JSON.parse(   data.value.IsShow );
     if (data.value.Type == "Add") {
         $instance.post($api.module.Add, data.value).then((resp) => {
             if (resp.success) {

@@ -10,7 +10,6 @@ namespace BMS.Controllers
         [HttpGet]
         public string Check()
         {
-            Console.WriteLine($"BmsV1Service-Ok-【{DateTime.Now:yyyy/MM/dd HH:mm:ss}】");
             return $"BmsV1Service-Ok-【{DateTime.Now:yyyy/MM/dd HH:mm:ss}】";
         }
     }

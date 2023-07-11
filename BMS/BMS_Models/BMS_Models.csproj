@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ys.Tools" Version="1.1.9" />
+    <PackageReference Include="Ys.Tools" Version="1.1.10" />
   </ItemGroup>
 
 </Project>

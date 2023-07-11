@@ -1,10 +1,12 @@
 ﻿using System.Text.Json;
+using BMS_Db.BLL.Module;
 using BMS_Db.BLL.User;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Ys.Tools;
 using Ys.Tools.Controllers;
 using Ys.Tools.Extra;
@@ -37,17 +39,49 @@ namespace BMS.Controllers
             return ApiResult.True();
         }
 
+        [HttpPost]
+        public ApiResult Update(User user)
+        {
+
+            _userBaseBll.Edit(user);
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+          
+            return ApiResult.True();
+        }
+        [HttpPost]
+        public ApiResult Delete(User user)
+        {
+            _userBaseBll.Delete(user);
+            _dbContext.SaveChanges();
+            return ApiResult.True();
+        }
+
+
         [HttpGet]
         public async Task<ApiResult> GetList()
         {
-            var user = await _userBaseBll.GetUser();
-            return user;
+            var data = await _userBaseBll.GetUser();
+            var pagination = new Pagination()
+            {
+                DefaultPageSize = 5,//默认多少条
+                DefaultCurrent = 1,
+                Total = data.Count
+            };
+            return ApiResult.True(new { data, pagination });
         }
-
         [HttpGet]
-        public ApiResult GetUserTokenInfo()
+        public ApiResult GetEntityByCode(string code)
         {
-            return ApiResult.True(CurrentUser.ToString());
+            var data = _userBaseBll.GetUserEntityByCode(code);
+            return ApiResult.True(new { data });
         }
     }
 }

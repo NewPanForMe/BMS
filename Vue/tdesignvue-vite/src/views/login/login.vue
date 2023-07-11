@@ -20,7 +20,7 @@
                 </t-form-item>
                 <div class="login-button">
                     <t-form-item>
-                        <t-button theme="primary" type="submit" block>登录</t-button>
+                        <t-button theme="primary" type="submit" block :loading="loadding">登录</t-button>
                     </t-form-item>
                 </div>
             </t-form>
@@ -38,6 +38,7 @@ export default {
                 username: "",
                 password: "",
             }),
+            loadding:false
         };
     },
     methods: {
@@ -48,15 +49,10 @@ export default {
             if (this.formData.username == null || this.formData.password == null) {
                 return false;
             }
-
             this.$instance.post(this.$api.login.checkUserName, this.formData).then((resp) => {
-                console.log(resp);
-                const token = resp.result.token;
-                const jwtVersion = resp.result.jwtVersion;
-                const refreshToken = resp.result.refreshToken;
-                this.$cookies.saveToken(token, jwtVersion);
-                this.$cookies.saveRefreshToken(refreshToken);
-                this.$router.push({ name: "index" });
+           
+                this.$cookies.saveToken(resp.result);
+                this.$router.push("/index");
             });
         },
     },

@@ -21,6 +21,7 @@ instance.interceptors.request.use(
             //存在,放入请求头
             config.headers.Authorization = "Bearer " + token.tokenName;
             config.headers.JwtVersion = token.jwtVersion;
+            config.headers.RefreshToken = token.refreshToken;
         }
         return config;
     },
@@ -47,18 +48,9 @@ instance.interceptors.response.use(
     (error) => {
         console.log(error);
         if (error.response.status == "401") {
-            let refreshToken = cookie.getRefreshToken();
-            instance
-                .post(api.refreshToken.RefreshToken, {
-                    token: refreshToken,
-                })
-                .then((resp) => {
-                    console.log(resp);
-                    cookie.removeToken();
-                    const token = resp.result.token;
-                    const jwtVersion = resp.result.jwtVersion;
-                    cookie.saveToken(token, jwtVersion);
-                });
+            MessagePlugin.error("无权限");
+            router.replace("/");
+            cookie.removeToken();
         }
     }
 );

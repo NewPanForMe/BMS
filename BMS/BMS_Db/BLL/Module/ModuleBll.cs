@@ -19,6 +19,7 @@ public class ModuleBll : IBll
     {
         _dbContext = dbContext;
         _logger = logger;
+        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
 
@@ -62,17 +63,8 @@ public class ModuleBll : IBll
     /// <returns></returns>
     public async Task<List<BMS_Models.DbModels.Module>> GetModules(string value)
     {
-        var listAsync = await _dbContext.Module.ToListAsync();
-        var newList = new List<BMS_Models.DbModels.Module>();
-        if (string.IsNullOrEmpty(value))
-        {
-            newList = listAsync;
-        }
-        else
-        {
-            newList = listAsync.Where(x => x.ParentCode == value).ToList();
-        }
-
+        var listAsync = await _dbContext.Module.AsNoTracking().ToListAsync();
+        var newList = string.IsNullOrEmpty(value) ? listAsync : listAsync.Where(x => x.ParentCode == value).ToList();
         _logger.LogWarning("获取模块列表：{newList}", newList.Count);
         return newList;
     }
@@ -86,7 +78,7 @@ public class ModuleBll : IBll
     public BMS_Models.DbModels.Module GetModuleEntityByCode(string code)
     {
         code.NotNull("传入编号为空");
-        var module = _dbContext.Module.FirstOrDefault(x => x.Code.Equals(code));
+        var module = _dbContext.Module.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
         module = module.NotNull("当前数据不存在");
         _logger.LogWarning("获取模块{code}：{module}", code, module);
         return module;
@@ -99,7 +91,7 @@ public class ModuleBll : IBll
     /// </summary>
     public async Task<List<Tree>> GetTreeNode()
     {
-        var listAsync = await _dbContext.Module.ToListAsync();
+        var listAsync = await _dbContext.Module.AsNoTracking().ToListAsync();
         var trees = GetTree(listAsync, "father");
         _logger.LogWarning("获取模块树结构：{module}", trees.Count);
         return trees;
@@ -135,7 +127,8 @@ public class ModuleBll : IBll
     public async Task<List<Menu>> GetMenuNode()
     {
         var listAsync = await _dbContext.Module.ToListAsync();
-        var menus = GetMenu(listAsync,"root");
+        listAsync = listAsync.Where(x => x.IsShow).ToList();
+        var menus = GetMenu(listAsync, "root");
         _logger.LogWarning("获取菜单：{menus}", menus.Count);
         return menus;
     }
@@ -156,7 +149,7 @@ public class ModuleBll : IBll
                 Value = module.Value,
                 Child = new List<Menu>(),
                 Icon = module.Icon,
-                Meta = new Meta(){Title = module.Name},
+                Meta = new Meta() { Title = module.Name },
                 Path = module.Path,
             };
             menu.Child.AddRange(GetMenu(miModules, module.Value));

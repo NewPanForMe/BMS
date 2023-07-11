@@ -1,10 +1,12 @@
 ﻿using BMS_Db.EfContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Ys.Base.Tools.xTool;
+using Ys.Tools.Extra;
 using Ys.Tools.Interface;
 using Ys.Tools.Response;
 namespace BMS_Db.BLL.User;
-
+using BMS_Models.DbModels;
 /// <summary>
 /// User基础操作类-增删改查
 /// </summary>
@@ -16,6 +18,7 @@ public class UserBaseBll : IBll
     {
         _dbContext = dbContext;
         _logger = logger;
+        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     /// <summary>
@@ -23,9 +26,15 @@ public class UserBaseBll : IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Add(BMS_Models.DbModels.User user)
+    public void Add(User user)
     {
+        user.LoginPasswordSalt = Guid.NewGuid().ToString();
+        user.LoginPassword = Md5Tools.MD5_32(user.LoginPassword + user.LoginPasswordSalt);
         user.JwtVersion = 1;
+        user.Code= Guid.NewGuid().ToString();
+        user.IsLock = false;
+        user.ErrorCount = 0;
+        user.ErrorCancelTime= DateTime.Now;
         _dbContext.User.Add(user);
         _logger.LogWarning("新增用户：{user}", user);
     }
@@ -35,8 +44,21 @@ public class UserBaseBll : IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Edit(BMS_Models.DbModels.User user)
+    public void Edit(User user)
     {
+        var userEntityByCode = GetUserEntityByCode(user.Code);
+        if (string.IsNullOrEmpty(user.LoginPassword))
+        {
+            user.LoginPassword = userEntityByCode.LoginPassword;
+        }
+        else
+        {
+            user.LoginPassword = Md5Tools.MD5_32(user.LoginPassword + userEntityByCode.LoginPasswordSalt);
+        }
+
+        user.ErrorCount = userEntityByCode.ErrorCount;
+        user.ErrorCancelTime = userEntityByCode.ErrorCancelTime;
+        user.LoginPasswordSalt = userEntityByCode.LoginPasswordSalt;
         _dbContext.User.Update(user);
         _logger.LogWarning("修改用户：{user}", user);
 
@@ -47,10 +69,9 @@ public class UserBaseBll : IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Delete(BMS_Models.DbModels.User user)
+    public void Delete(User user)
     {
-        user.IsDelete = true;
-        _dbContext.User.Update(user);
+        _dbContext.User.Remove(user);
         _logger.LogWarning("删除用户：{user}", user);
 
     }
@@ -59,10 +80,27 @@ public class UserBaseBll : IBll
     /// 获取用户
     /// </summary>
     /// <returns></returns>
-    public async Task<ApiResult> GetUser()
+    public async Task<List<User>> GetUser()
     {
-        var listAsync = await _dbContext.User.ToListAsync();
+        var listAsync = await _dbContext.User.AsNoTracking().ToListAsync();
         _logger.LogWarning("获取用户列表：{user}", listAsync.Count);
-        return ApiResult.True(listAsync);
+        return (listAsync);
     }
+
+
+
+
+    /// <summary>
+    /// 获取模块
+    /// </summary>
+    /// <returns></returns>
+    public User GetUserEntityByCode(string code)
+    {
+        code.NotNull("传入编号为空");
+        var user = _dbContext.User.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
+        user = user.NotNull("当前数据不存在");
+        _logger.LogWarning("获取用户{code}：{user}", code, user);
+        return user;
+    }
+
 }

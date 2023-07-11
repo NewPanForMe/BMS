@@ -29,6 +29,7 @@ public class UserBll : IBll
         _dbContext = dbContext;
         _logger = logger;
         _memoryCache = memoryCache;
+        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     /// <summary>
@@ -81,7 +82,7 @@ public class UserBll : IBll
         var refreshToken = TokenTools.CreateRefreshToken(listClaims);
         _logger.LogWarning("{userName}登录成功，生成token【{token}】,refreshToken【{refreshToken}】", userName, token, refreshToken);
         await _dbContext.SaveChangesAsync();
-        return ApiResult.True(new { token, user.JwtVersion, refreshToken });
+        return ApiResult.True(new { token, user.JwtVersion, refreshToken,user.Name });
     }
 
     /// <summary>

@@ -13,12 +13,13 @@ public class LogBll : IBll
     {
         _dbContext = dbContext;
         _logger = logger;
+        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     /// <summary>
     /// 获取日志
     /// </summary>
-    /// <param name="value">值</param>
+    /// <param name="count">列表获取数量</param>
     /// <returns></returns>
     public async Task<List<NLog>> GetLogs(int count)
     {

@@ -97,7 +97,7 @@ public class Startup
         app.UseAuthorization();
         app.UseResponseCaching();
         app.UseMiddleware<ExceptionMiddleWare>();
-        app.UseMiddleware<JwtVersionMiddleWare>();
+       // app.UseMiddleware<JwtVersionMiddleWare>();
 
         app.UseEndpoints(x =>
         {

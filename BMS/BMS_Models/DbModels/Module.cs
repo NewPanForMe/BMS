@@ -37,7 +37,7 @@ public record Module
     /// <summary>
     /// 创建时间
     /// </summary>
-    public DateTime CreateTime { get; set; } = DateTime.Now;
+    public DateTime? CreateTime { get; set; } 
     //public MetaClass Meta { get; set; } =new MetaClass();
 }
 

@@ -1,6 +1,10 @@
 const api = {
     user: {
         GetUserList: window.config.baseUrl + "/User/GetList",
+        Add: window.config.baseUrl + "/User/Add",
+        Edit: window.config.baseUrl + "/User/Update",
+        Delete: window.config.baseUrl + "/User/Delete",
+        GetEntityByCode: window.config.baseUrl + "/User/GetEntityByCode",
     },
     module: {
         GetModuleList: window.config.baseUrl + "/Module/GetList",

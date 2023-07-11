@@ -74,3 +74,14 @@ body {
     height: 3vh;
 }
 
+.layout .t-layout__header .header{
+    background-color: #b1acac;
+    height: 56px;
+} 
+
+.layout .t-layout__header .header .header-left{
+    float: right;
+} 
+.layout .t-layout__header .header .header-left .header-left-logout{
+    padding: 11px 10px 0px 0px;
+} 
