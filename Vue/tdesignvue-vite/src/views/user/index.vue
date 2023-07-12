@@ -6,14 +6,14 @@
         </t-button>
     </div>
     <div class="content">
-        <baseTable  :columns="columns" :listUrl="listUrl"  @row-click="handleRowClick"/>
+        <baseTable :columns="columns" :listUrl="listUrl" @row-click="handleRowClick" />
     </div>
 </template>
 <script setup lang="jsx">
 import $instance from "@/utils/http";
 import $api from "@/api/index";
-import $router from '@/router/router'
-import {  reactive,ref } from "vue";
+import $router from "@/router/router";
+import { reactive, ref } from "vue";
 import { MessagePlugin } from "tdesign-vue-next";
 import { AddIcon } from "tdesign-icons-vue-next";
 import baseTable from "@/components/table/baseTable.vue";
@@ -49,16 +49,17 @@ const columns = [
         title: "操作",
         cell: (h, { row }) => {
             return (
-                <div class="tdesign-table-demo__table-operations">
-                    <t-button variant="outline" theme="default" onClick={() => onEdit(row)}>
-                        修改
-                    </t-button>
-                    &nbsp;
-                    <t-popconfirm content="确认删除吗" theme="danger" onConfirm={() => onDelete(row)}>
-                        <t-button variant="text" theme="danger">
-                            删除
+                <div class="">
+                    <t-space>
+                        <t-button variant="outline" theme="default" onClick={() => onEdit(row)}>
+                            修改
                         </t-button>
-                    </t-popconfirm>
+                        <t-popconfirm content="确认删除吗" theme="danger" onConfirm={() => onDelete(row)}>
+                            <t-button variant="text" theme="danger">
+                                删除
+                            </t-button>
+                        </t-popconfirm>
+                    </t-space>
                 </div>
             );
         },
@@ -66,10 +67,10 @@ const columns = [
     },
 ];
 const adduser = () => {
-   $router.push({path:"/user_add/add/code"})
+    $router.push({ path: "/user_add/add/code" });
 };
 const onEdit = (row) => {
-    $router.push({path:"/user_add/edit/"+row.code})
+    $router.push({ path: "/user_add/edit/" + row.code });
 };
 const onDelete = (row) => {
     console.log(row);
@@ -81,7 +82,6 @@ const onDelete = (row) => {
     });
 };
 const handleRowClick = (e) => {
-    console.log(e)
+    console.log(e);
 };
-
 </script>

@@ -13,7 +13,6 @@
                 </t-card>
             </t-col>
             <t-col :span="10">
-                
                 <t-table
                     row-key="index"
                     :data="list.data"
@@ -49,8 +48,8 @@
             <t-form-item label="父节点" name="ParentCode">
                 <t-input placeholder="当前父节点" :readonly="true" v-model="data.ParentCode" />
             </t-form-item>
-            <t-form-item label="是否展示" name="IsShow"  >
-                <t-select  v-model="data.IsShow"  >
+            <t-form-item label="是否展示" name="IsShow">
+                <t-select v-model="data.IsShow">
                     <t-option key="true" label="是" value="true" />
                     <t-option key="false" label="否" value="false" />
                 </t-select>
@@ -102,16 +101,17 @@ const columns = [
         title: "操作",
         cell: (h, { row }) => {
             return (
-                <div class="tdesign-table-demo__table-operations">
-                    <t-button variant="outline" theme="default" onClick={() => onEdit(row)}>
-                        修改
-                    </t-button>
-                    &nbsp;
-                    <t-popconfirm content="确认删除吗" theme="danger" onConfirm={() => onDelete(row)}>
-                        <t-button variant="text" theme="danger">
-                            删除
+                <div class="">
+                    <t-space>
+                        <t-button variant="outline" theme="default" onClick={() => onEdit(row)}>
+                            修改
                         </t-button>
-                    </t-popconfirm>
+                        <t-popconfirm content="确认删除吗" theme="danger" onConfirm={() => onDelete(row)}>
+                            <t-button variant="text" theme="danger">
+                                删除
+                            </t-button>
+                        </t-popconfirm>
+                    </t-space>
                 </div>
             );
         },
@@ -119,9 +119,9 @@ const columns = [
     },
 ];
 const addModule = () => {
-    if(data.value.ParentCode==""){
-        MessagePlugin.error("请选择节点")
-        return ;
+    if (data.value.ParentCode == "") {
+        MessagePlugin.error("请选择节点");
+        return;
     }
     visible.value = true;
     drawName.value = "新增";
@@ -211,7 +211,7 @@ const onSubmit = () => {
         MessagePlugin.error("是否展示必填");
         return;
     }
-    data.value.IsShow = JSON.parse(   data.value.IsShow );
+    data.value.IsShow = JSON.parse(data.value.IsShow);
     if (data.value.Type == "Add") {
         $instance.post($api.module.Add, data.value).then((resp) => {
             if (resp.success) {
