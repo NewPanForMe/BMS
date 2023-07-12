@@ -35,11 +35,15 @@ public record User
     /// <summary>
     /// 身份证好
     /// </summary>
-    public int? IdCard { get; set; }
+    public string? IdCard { get; set; }
     /// <summary>
     /// 电话
     /// </summary>
     public string? Phone { get; set; } 
+    /// <summary>
+    /// 邮件
+    /// </summary>
+    public string? Mail { get; set; }
     /// <summary>
     /// token版本
     /// </summary>
@@ -65,7 +69,7 @@ public record User
     /// 角色
     /// </summary>
     [NotMapped]
-    public string[] Roles { get; set; } = new string[]{};
+    public string[] Roles { get; set; } = {};
 
     public List<string> RoleList()
     {

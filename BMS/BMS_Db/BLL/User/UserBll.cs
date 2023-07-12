@@ -22,9 +22,6 @@ public class UserBll : IBll
     private readonly UserBaseBll _userBaseBll;
     private readonly ILogger<UserBll> _logger;
     private readonly IMemoryCache _memoryCache;
-
-
-
     public UserBll(BmsV1DbContext dbContext, ILogger<UserBll> logger, IMemoryCache memoryCache, UserBaseBll userBaseBll)
     {
         _dbContext = dbContext;
@@ -85,7 +82,7 @@ public class UserBll : IBll
         var refreshToken = TokenTools.CreateRefreshToken(listClaims);
         _logger.LogWarning("{userName}登录成功，生成token【{token}】,refreshToken【{refreshToken}】", userName, token, refreshToken);
         await _dbContext.SaveChangesAsync();
-        return ApiResult.True(new { token, user.JwtVersion, refreshToken,user.Name });
+        return ApiResult.True(new { token, user.JwtVersion, refreshToken,user.Name,user.Code });
     }
 
     /// <summary>

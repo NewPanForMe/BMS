@@ -58,14 +58,14 @@ public class RoleBll:IBll
     {
         _dbContext.Role.Update(role);
         var moduleList = role.ModuleList();
+        var menuRoles = _dbContext.MenuRole.Where(x => x.RoleCode == role.Code).ToList();
+        _dbContext.MenuRole.RemoveRange(menuRoles);
         if (moduleList.Count > 0)
         {
-            var menuRoles = _dbContext.MenuRole.Where(x=>x.RoleCode== role.Code).ToList();
-            _dbContext.MenuRole.RemoveRange(menuRoles);
             moduleList.ForEach(module =>
             {
                 var moduleRole = new MenuRole()
-                {
+                 {
                     Code = Guid.NewGuid().ToString(),
                     ModuleCode = module,
                     RoleCode = role.Code

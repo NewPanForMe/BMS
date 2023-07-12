@@ -138,10 +138,8 @@ getTableList($api.module.GetModuleList);
 const handleRowClick = (e) => {};
 
 const TreeNodeCick = (e) => {
-    console.log(e);
     TreeNodeValue.value = e.value;
     getTableList($api.module.GetModuleList + "?value=" + TreeNodeValue.value);
-    data.value.ParentCode = value;
 };
 
 </script>

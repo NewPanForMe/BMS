@@ -14,7 +14,6 @@ const GetModule = ()=>{
 }
 GetModule();
 const actived = (e) => {
-    console.log(e.node);
     emit("ClickNode", e.node);
 };
 </script>

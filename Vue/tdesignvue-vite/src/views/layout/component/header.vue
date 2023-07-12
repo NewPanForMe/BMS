@@ -25,25 +25,19 @@ import $router from "@/router/router";
 import { MessagePlugin } from 'tdesign-vue-next';
 const visible = ref(false);
 const onClick = (context) => {
-    console.log("点击了确认按钮，弹出弹窗", context);
     visible.value = true;
 };
 const onConfirmAnother = (context) => {
-    console.log("点击了确认按钮", context);
     visible.value = false;
     $cookies.removeToken();
     $cookies.removeRefreshToken();
-    $router.push({ path: "/", replace: true });
+    $router.push({ name: "login", replace: true });
 };
 
 const options = [
-    { content: "操作一", value: 1 },
-    { content: "操作二", value: 2 },
-    { content: "操作三", value: 3 },
-    { content: "操作四", value: 4 },
+    { content: "个人信息", value: "/user_info" },
 ];
 const clickHandler = (data) => {
-    console.log(data);
-    MessagePlugin.success(`选中【${data.content}】`);
+    $router.push({path:data.value})
 };
 </script>
