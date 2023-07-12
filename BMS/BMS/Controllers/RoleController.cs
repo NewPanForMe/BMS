@@ -1,64 +1,56 @@
-﻿using System.Text.Json;
-using BMS_Db.BLL.Module;
-using BMS_Db.BLL.User;
+﻿using BMS_Db.BLL.Role;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
+using Consul;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using Ys.Tools;
 using Ys.Tools.Controllers;
-using Ys.Tools.Extra;
-using Ys.Tools.Models;
 using Ys.Tools.Response;
+using Role = BMS_Models.DbModels.Role;
 
 namespace BMS.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class UserController : BaseController
+    public class RoleController : BaseController
     {
-        private readonly  UserBaseBll _userBaseBll;
-        private readonly  BmsV1DbContext _dbContext;
-        private readonly  ILogger<UserController> _logger;
+        private readonly RoleBll _roleBll;
+        private readonly BmsV1DbContext _dbContext;
+        private readonly ILogger<RoleController> _logger;
 
-        public UserController(UserBaseBll userBaseBll,  ILogger<UserController> logger, BmsV1DbContext dbContext)
+        public RoleController(RoleBll roleBll, BmsV1DbContext dbContext, ILogger<RoleController> logger)
         {
-            _userBaseBll = userBaseBll;
-            _logger = logger;
+            _roleBll = roleBll;
             _dbContext = dbContext;
+            _logger = logger;
         }
         [HttpPost]
-        public ApiResult Add(User user)
+        public ApiResult Add(Role role)
         {
-            
-            _userBaseBll.Add(user);
+            _roleBll.Add(role);
             _dbContext.SaveChanges();
             return ApiResult.True();
         }
 
         [HttpPost]
-        public ApiResult Update(User user)
+        public ApiResult Update(Role role)
         {
-            _userBaseBll.Edit(user);
-                _dbContext.SaveChanges();
-            return ApiResult.True();
-        }
-        [HttpPost]
-        public ApiResult Delete(User user)
-        {
-            _userBaseBll.Delete(user);
+            _roleBll.Edit(role);
             _dbContext.SaveChanges();
             return ApiResult.True();
         }
-
-
+        [HttpPost]
+        public ApiResult Delete(Role role)
+        {
+            _roleBll.Delete(role);
+            _dbContext.SaveChanges();
+            return ApiResult.True();
+        }
         [HttpGet]
         public async Task<ApiResult> GetList()
         {
-            var data = await _userBaseBll.GetUser();
+            var data = await _roleBll.GetRole();
             var pagination = new Pagination()
             {
                 DefaultPageSize = 5,//默认多少条
@@ -70,7 +62,14 @@ namespace BMS.Controllers
         [HttpGet]
         public ApiResult GetEntityByCode(string code)
         {
-            var data = _userBaseBll.GetUserEntityByCode(code);
+            var data = _roleBll.GetRoleEntityByCode(code);
+            return ApiResult.True(new { data });
+        }
+
+        [HttpGet]
+        public async Task<ApiResult> GetRoleOptions()
+        {
+            var data = await _roleBll.GetSelectOptions();
             return ApiResult.True(new { data });
         }
     }

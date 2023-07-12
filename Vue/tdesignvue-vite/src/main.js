@@ -7,6 +7,7 @@ import { MessagePlugin } from "tdesign-vue-next";
 import instance from './utils/http'
 import cookies from './utils/cookies'
 import api from './api/index'
+import moment from 'moment'
 
 
 
@@ -15,6 +16,7 @@ import 'tdesign-vue-next/es/style/index.css';
 var app=createApp(App)
 app.use(TDesign)
 app.use(router)
+app.use(moment)
 
 app.provide('$message', MessagePlugin)
 app.provide('$instance', instance)

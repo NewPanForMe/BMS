@@ -1,4 +1,6 @@
-﻿namespace BMS_Models.DbModels;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BMS_Models.DbModels;
 
 public record User
 {
@@ -58,4 +60,17 @@ public record User
     /// 解锁时间
     /// </summary>
     public DateTime ErrorCancelTime { get; set; } = new DateTime();
+
+    /// <summary>
+    /// 角色
+    /// </summary>
+    [NotMapped]
+    public string[] Roles { get; set; } = new string[]{};
+
+    public List<string> RoleList()
+    {
+        return Roles.ToList();
+    }
+
+
 }

@@ -31,38 +31,13 @@
         </t-row>
     </div>
 
-    <t-drawer v-model:visible="visible" :header="drawName" size="medium" :confirmBtn="drawName" :onConfirm="onConfirm" :onCancel="onCancel">
-        <t-form ref="form" :data="data" :onSubmit="onSubmit">
-            <t-form-item label="名称" name="Name">
-                <t-input placeholder="请输入名称" v-model="data.Name" />
-            </t-form-item>
-            <t-form-item label="路径" name="Path">
-                <t-input placeholder="请输入路径" v-model="data.Path" />
-            </t-form-item>
-            <t-form-item label="图标" name="Icon">
-                <icon @dropDownValueChange="dropDownValueChange" v-model="data.Icon" :value="data.Icon" />
-            </t-form-item>
-            <t-form-item label="值" name="Value">
-                <t-input placeholder="请输入值" v-model="data.Value" />
-            </t-form-item>
-            <t-form-item label="父节点" name="ParentCode">
-                <t-input placeholder="当前父节点" :readonly="true" v-model="data.ParentCode" />
-            </t-form-item>
-            <t-form-item label="是否展示" name="IsShow">
-                <t-select v-model="data.IsShow">
-                    <t-option key="true" label="是" value="true" />
-                    <t-option key="false" label="否" value="false" />
-                </t-select>
-            </t-form-item>
-            <t-input hidden :readonly="true" v-model="data.Code" />
-        </t-form>
-    </t-drawer>
+
 </template>
 <script setup lang="jsx">
 import $instance from "@/utils/http";
 import $api from "@/api/index";
+import $router from '@/router/router'
 import { ref, reactive, defineComponent } from "vue";
-import icon from "./component/icon.vue";
 import tree from "./component/tree.vue";
 import baseTable from "@/components/table/baseTable.vue";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -71,8 +46,7 @@ let list = reactive({
     pagination: { defaultCurrent: 1, defaultPageSize: 5, total: 0 },
     data: [],
 });
-let visible = ref(false);
-let drawName = ref("");
+let TreeNodeValue=ref("")
 const columns = [
     { colKey: "path", title: "路径", align: "center" }, // width: "100"
     {
@@ -119,39 +93,25 @@ const columns = [
     },
 ];
 const addModule = () => {
-    if (data.value.ParentCode == "") {
+    if (TreeNodeValue.value == "") {
         MessagePlugin.error("请选择节点");
         return;
     }
-    visible.value = true;
-    drawName.value = "新增";
-    data.value.Type = "Add";
+  $router.push({path:"/module_add/add/"+TreeNodeValue.value +"/code"});
 };
 const onEdit = (row) => {
-    getTableEntity(row.code);
-    visible.value = true;
-    drawName.value = "修改";
-    data.value.Type = "Edit";
+    $router.push({name:"module_add" ,params:{
+        code:row.code,
+        parentCode:"parentCode",
+        type:"edit",
+    }});
 };
 const onDelete = (row) => {
     console.log(row);
     $instance.post($api.module.Delete, row).then((resp) => {
         if (resp.success) {
             MessagePlugin.success("成功");
-            visible.value = false;
             getTableList();
-            data = ref({
-                Id: 0,
-                Code: "",
-                Name: "",
-                Path: "",
-                Icon: "",
-                Value: "",
-                ParentCode: "",
-                ParentName: "",
-                IsShow: true,
-                Type: "",
-            });
         }
     });
 };
@@ -175,102 +135,13 @@ const getTableList = (url) => {
     });
 };
 getTableList($api.module.GetModuleList);
-
 const handleRowClick = (e) => {};
 
 const TreeNodeCick = (e) => {
     console.log(e);
-    let value = e.value;
-    getTableList($api.module.GetModuleList + "?value=" + value);
+    TreeNodeValue.value = e.value;
+    getTableList($api.module.GetModuleList + "?value=" + TreeNodeValue.value);
     data.value.ParentCode = value;
 };
-const dropDownValueChange = (e) => {
-    data.Icon = e;
-};
-const onConfirm = () => {
-    onSubmit();
-};
-const onCancel = () => {
-    visible.value = false;
-};
-const onSubmit = () => {
-    console.log(data.value);
-    if (data.value.Name == "") {
-        MessagePlugin.error("名称必填");
-        return;
-    }
-    if (data.value.Path == "") {
-        MessagePlugin.error("路径必填");
-        return;
-    }
-    if (data.value.Icon == "") {
-        MessagePlugin.error("图标必填");
-        return;
-    }
-    if (data.value.IsShow == "") {
-        MessagePlugin.error("是否展示必填");
-        return;
-    }
-    data.value.IsShow = JSON.parse(data.value.IsShow);
-    if (data.value.Type == "Add") {
-        $instance.post($api.module.Add, data.value).then((resp) => {
-            if (resp.success) {
-                MessagePlugin.success("成功");
-                visible.value = false;
-                getTableList();
-                data = ref({
-                    Id: 0,
-                    Code: "",
-                    Name: "",
-                    Path: "",
-                    Icon: "",
-                    Value: "",
-                    ParentCode: "",
-                    ParentName: "",
-                    IsShow: true,
-                    Type: "",
-                });
-            }
-        });
-    }
-    if (data.value.Type == "Edit") {
-        $instance.post($api.module.Edit, data.value).then((resp) => {
-            if (resp.success) {
-                MessagePlugin.success("成功");
-                visible.value = false;
-                getTableList();
-                data = ref({
-                    Id: 0,
-                    Code: "",
-                    Name: "",
-                    Path: "",
-                    Icon: "",
-                    Value: "",
-                    ParentCode: "",
-                    ParentName: "",
-                    IsShow: true,
-                    Type: "",
-                });
-            }
-        });
-    }
-};
-const getTableEntity = (entityCode) => {
-    $instance
-        .get($api.module.GetEntityByCode, {
-            params: {
-                code: entityCode,
-            },
-        })
-        .then((resp) => {
-            data.value.Icon = resp.result.data.icon;
-            data.value.Name = resp.result.data.name;
-            data.value.Path = resp.result.data.path;
-            data.value.Value = resp.result.data.value;
-            data.value.ParentCode = resp.result.data.parentCode;
-            data.value.IsShow = resp.result.data.isShow;
-            data.value.Code = resp.result.data.code;
-            data.value.Id = resp.result.data.id;
-        });
-};
+
 </script>

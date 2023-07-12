@@ -30,6 +30,7 @@ namespace BMS.Controllers
         public async Task<ApiResult> Add(Module module)
         {
             module.Code=Guid.NewGuid().ToString();
+            module.CreateTime = DateTime.Now;
             _moduleBll.Add(module);
            await _dbContext.SaveChangesAsync();
            return ApiResult.True();
@@ -68,6 +69,18 @@ namespace BMS.Controllers
         public  ApiResult GetEntityByCode(string code)
         {
             var data =  _moduleBll.GetModuleEntityByCode(code);
+            return ApiResult.True(new { data });
+        }
+        [HttpGet]
+        public async Task<ApiResult> GetSelectOptions()
+        {
+            var data = await _moduleBll.GetSelectOptions();
+            return ApiResult.True(new { data });
+        }
+        [HttpGet]
+        public async Task<ApiResult> GetGroupSelectOptions()
+        {
+            var data = await _moduleBll.GetGroupSelectOptions();
             return ApiResult.True(new { data });
         }
     }

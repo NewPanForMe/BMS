@@ -12,6 +12,9 @@ const api = {
         Edit: window.config.baseUrl + "/Module/Update",
         Delete: window.config.baseUrl + "/Module/Delete",
         GetEntityByCode: window.config.baseUrl + "/Module/GetEntityByCode",
+        GetGroupSelectOptions: window.config.baseUrl + "/Module/GetGroupSelectOptions",
+        GetSelectOptions: window.config.baseUrl + "/Module/GetSelectOptions",
+
     },
     login: {
         checkUserName: window.config.baseUrl + "/Login/Check",
@@ -27,6 +30,14 @@ const api = {
     },
     log:{
         GetLogList:window.config.baseUrl + "/NLog/GetLogList",
-    }
+    },
+    role: {
+        GetRoleList: window.config.baseUrl + "/Role/GetList",
+        Add: window.config.baseUrl + "/Role/Add",
+        Edit: window.config.baseUrl + "/Role/Update",
+        Delete: window.config.baseUrl + "/Role/Delete",
+        GetEntityByCode: window.config.baseUrl + "/Role/GetEntityByCode",
+        GetRoleOptions:window.config.baseUrl + "/Role/GetRoleOptions",
+    },
 }
 export default api

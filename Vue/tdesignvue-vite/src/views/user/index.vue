@@ -6,18 +6,19 @@
         </t-button>
     </div>
     <div class="content">
-        <baseTable :columns="columns" :listUrl="listUrl" @row-click="handleRowClick" />
+        <baseTable   ref="table" :columns="columns" :listUrl="listUrl" @row-click="handleRowClick" @refreshTable="refresh"  />
     </div>
 </template>
 <script setup lang="jsx">
 import $instance from "@/utils/http";
 import $api from "@/api/index";
 import $router from "@/router/router";
-import { reactive, ref } from "vue";
+import { reactive, ref,onMounted } from "vue";
 import { MessagePlugin } from "tdesign-vue-next";
 import { AddIcon } from "tdesign-icons-vue-next";
 import baseTable from "@/components/table/baseTable.vue";
 const listUrl = $api.user.GetUserList;
+
 const columns = [
     { colKey: "name", title: "名称", align: "center" },
     { colKey: "loginName", title: "登录名称", align: "center" },
@@ -66,8 +67,18 @@ const columns = [
         align: "center",
     },
 ];
+let table = ref(null)
+onMounted(() => {
+  loadTable()
+})
+const loadTable=()=>{
+    //console.log(table)
+    //console.log(table.value)
+    table.value.getTableList()
+}
+let refresh = ref(false)
 const adduser = () => {
-    $router.push({ path: "/user_add/add/code" });
+  $router.push("/user_add/add/code");
 };
 const onEdit = (row) => {
     $router.push({ path: "/user_add/edit/" + row.code });
@@ -77,7 +88,7 @@ const onDelete = (row) => {
     $instance.post($api.user.Delete, row).then((resp) => {
         if (resp.success) {
             MessagePlugin.success("成功");
-            getTableList();
+            loadTable()
         }
     });
 };

@@ -8,6 +8,7 @@ using BMS_Models.DbModels;
 using Microsoft.IdentityModel.Tokens;
 using Ys.Tools.Extra;
 using Consul;
+using System.Linq;
 
 namespace BMS_Db.BLL.Module;
 
@@ -124,9 +125,17 @@ public class ModuleBll : IBll
     /// <summary>
     /// 生成Menu
     /// </summary>
-    public async Task<List<Menu>> GetMenuNode()
+    /// <param name="roles"></param>
+    public async Task<List<Menu>> GetMenuNode(string[] roles)
     {
-        var listAsync = await _dbContext.Module.ToListAsync();
+        var modules =await  _dbContext.Module.ToListAsync();
+        var moduleRole =await _dbContext.MenuRole.Where(x=>roles.Contains(x.RoleCode)).Select(x=>x.ModuleCode).Distinct().AsNoTracking().ToListAsync();
+        var listAsync = modules.Where(x=> moduleRole.Contains(x.Code)).ToList();
+        var parentCode = listAsync.Select(x=>x.ParentCode).Distinct().ToList();
+        parentCode.ForEach(p =>
+        {
+            listAsync.Add(modules.Single(x => x.Value == p));
+        });
         listAsync = listAsync.Where(x => x.IsShow).ToList();
         var menus = GetMenu(listAsync, "root");
         _logger.LogWarning("获取菜单：{menus}", menus.Count);
@@ -157,5 +166,54 @@ public class ModuleBll : IBll
         });
         return list;
     }
+
+
+
+
+    /// <summary>
+    /// 获取下拉
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<SelectOption>> GetSelectOptions()
+    {
+        var selectOptions = new List<SelectOption>();
+        var role = await _dbContext.Module.AsNoTracking().ToListAsync();
+        role.ForEach(x =>
+        {
+            var select = new SelectOption() { Label = x.Name, Value = x.Code };
+            selectOptions.Add(select);
+        });
+        return selectOptions;
+    }
+
+    /// <summary>
+    /// 获取下拉
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<ModuleGroup>> GetGroupSelectOptions()
+    {
+        var moduleGroupList = new List<ModuleGroup>();
+        var allModule = await _dbContext.Module.AsNoTracking().ToListAsync();
+        var modules = allModule.Where(x => x.ParentCode == "root").ToList();
+        modules.ForEach(module =>
+        {
+            var list = allModule.Where(x=>x.ParentCode== module.Value).ToList();
+            var selectOptions = new  List<SelectOption>();
+            list.ForEach(x =>
+            {
+                selectOptions.Add(new SelectOption(){Label = x.Name,Value = x.Code});
+            });
+            var res = new ModuleGroup()
+            {
+                Group = module.Name,
+                Code = module.Code,
+                Children = selectOptions
+            };
+            moduleGroupList.Add(res);
+        });
+        return moduleGroupList;
+    }
+
+
 
 }

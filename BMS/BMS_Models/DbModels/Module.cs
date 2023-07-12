@@ -49,10 +49,10 @@ public class MetaClass
     public string Title { get; set; } = string.Empty;
 }
 
-public record Pagination
+public class ModuleGroup
 {
-    public int DefaultCurrent { get; set; } = 0;
-    public int DefaultPageSize { get; set; } = 0;
-    public  int Total { get; set; }  = 0;
+    public string Group { get; set; } = String.Empty;
+    public string Code { get; set; } = String.Empty;
+    public List<SelectOption> Children { get; set; } = new List<SelectOption>();
 }
 

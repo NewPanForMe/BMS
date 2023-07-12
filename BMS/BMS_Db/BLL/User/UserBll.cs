@@ -19,17 +19,18 @@ namespace BMS_Db.BLL.User;
 public class UserBll : IBll
 {
     private readonly BmsV1DbContext _dbContext;
-    private readonly ILogger<UserBaseBll> _logger;
+    private readonly UserBaseBll _userBaseBll;
+    private readonly ILogger<UserBll> _logger;
     private readonly IMemoryCache _memoryCache;
 
 
 
-    public UserBll(BmsV1DbContext dbContext, ILogger<UserBaseBll> logger, IMemoryCache memoryCache)
+    public UserBll(BmsV1DbContext dbContext, ILogger<UserBll> logger, IMemoryCache memoryCache, UserBaseBll userBaseBll)
     {
         _dbContext = dbContext;
         _logger = logger;
         _memoryCache = memoryCache;
-        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        _userBaseBll = userBaseBll;
     }
 
     /// <summary>
@@ -39,7 +40,7 @@ public class UserBll : IBll
     /// <param name="password"></param>
     public async Task<ApiResult> CheckAsync(string userName, string password)
     {
-        var user = await _dbContext.User.FirstOrDefaultAsync(x => x.LoginName == userName);
+        var user = _userBaseBll.GetUserEntityByLoginName(userName);
         user = user.NotNull($"用户{userName}不存在");
         var passSecret = Md5Tools.MD5_32(password + user.LoginPasswordSalt).ToLower();
         Console.WriteLine($"passSecret={passSecret}");
@@ -64,10 +65,11 @@ public class UserBll : IBll
         user.ErrorCount = 0;
         var listClaims = new List<Claim>()
         {
-            new(ClaimTypes.Name,user.Name ?? user.LoginName),
+            new (ClaimTypes.Name,user.Name ?? user.LoginName),
             new (ClaimTypes.NameIdentifier,user.Id.ToString()),
             new (ClaimTypes.Version,user.JwtVersion.ToString()),
             new ("UserCode",user.Code),
+            new (ClaimTypes.Role,string.Join(',',user.Roles)),
             new ("ExpireTime",DateTime.Now.AddMinutes(TokenConfig.Instance.AccessExpires).ToString("yyyy/MM/dd HH:mm:ss")),
         };
         var token = TokenTools.Create(listClaims);
@@ -77,6 +79,7 @@ public class UserBll : IBll
             new (ClaimTypes.NameIdentifier,user.Id.ToString()),
             new (ClaimTypes.Version,user.JwtVersion.ToString()),
             new ("UserCode",user.Code),
+            new (ClaimTypes.Role,string.Join(',',user.Roles)),
             new ("ExpireTime",DateTime.Now.AddHours(TokenConfig.Instance.RefreshToken).ToString("yyyy/MM/dd HH:mm:ss")),
         };
         var refreshToken = TokenTools.CreateRefreshToken(listClaims);

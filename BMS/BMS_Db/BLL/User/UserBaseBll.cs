@@ -7,6 +7,9 @@ using Ys.Tools.Interface;
 using Ys.Tools.Response;
 namespace BMS_Db.BLL.User;
 using BMS_Models.DbModels;
+using Consul;
+using System.Data;
+
 /// <summary>
 /// User基础操作类-增删改查
 /// </summary>
@@ -36,6 +39,23 @@ public class UserBaseBll : IBll
         user.ErrorCount = 0;
         user.ErrorCancelTime= DateTime.Now;
         _dbContext.User.Add(user);
+        var roleList = user.RoleList();
+        if (roleList.Count > 0)
+        {
+            roleList.ForEach(x =>
+            {
+                var userRole = new UserRole()
+                {
+                    Code = Guid.NewGuid().ToString(),
+                    RoleCode = x,
+                    RoleName = "",
+                    UserCode = user.Code
+                };
+                _dbContext.UserRole.Add(userRole);
+
+            });
+       
+        }
         _logger.LogWarning("新增用户：{user}", user);
     }
 
@@ -44,22 +64,35 @@ public class UserBaseBll : IBll
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    public void Edit(User user)
+    public  void Edit(User user)
     {
-        var userEntityByCode = GetUserEntityByCode(user.Code);
-        if (string.IsNullOrEmpty(user.LoginPassword))
-        {
-            user.LoginPassword = userEntityByCode.LoginPassword;
-        }
-        else
-        {
-            user.LoginPassword = Md5Tools.MD5_32(user.LoginPassword + userEntityByCode.LoginPasswordSalt);
-        }
+        var userEntityByCode = _dbContext.User.AsNoTracking().FirstOrDefault(x => x.Code.Equals(user.Code));
+        userEntityByCode = userEntityByCode.NotNull("未找到数据");
+        user.LoginPassword = string.IsNullOrEmpty(user.LoginPassword) ? userEntityByCode.LoginPassword : Md5Tools.MD5_32(user.LoginPassword + userEntityByCode.LoginPasswordSalt);
 
         user.ErrorCount = userEntityByCode.ErrorCount;
         user.ErrorCancelTime = userEntityByCode.ErrorCancelTime;
         user.LoginPasswordSalt = userEntityByCode.LoginPasswordSalt;
         _dbContext.User.Update(user);
+
+        //先移除所有角色，在重新添加
+        var roleList = user.RoleList();
+        if (roleList.Count > 0)
+        {
+            var userRoles = _dbContext.UserRole.Where(x=>x.UserCode==user.Code).ToList();
+            _dbContext.UserRole.RemoveRange(userRoles);
+            roleList.ForEach(x =>
+            {
+                var userRole = new UserRole()
+                {
+                    Code = Guid.NewGuid().ToString(),
+                    RoleCode = x,
+                    RoleName = "",
+                    UserCode = user.Code
+                };
+                _dbContext.UserRole.Add(userRole);
+            });
+        }
         _logger.LogWarning("修改用户：{user}", user);
 
     }
@@ -94,13 +127,53 @@ public class UserBaseBll : IBll
     /// 获取模块
     /// </summary>
     /// <returns></returns>
-    public User GetUserEntityByCode(string code)
+    public  User GetUserEntityByCode(string code)
     {
         code.NotNull("传入编号为空");
         var user = _dbContext.User.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
         user = user.NotNull("当前数据不存在");
+        var userRoles =  _dbContext.UserRole.AsNoTracking().Where(x => x.UserCode == code).ToList();
+        if (userRoles.Count > 0)
+        {
+            var roles = new string[userRoles.Count];
+            for (int i = 0; i < userRoles.Count; i++)
+            {
+                roles[i] = userRoles[i].RoleCode;
+            }
+
+            user.Roles = roles;
+
+        }
         _logger.LogWarning("获取用户{code}：{user}", code, user);
         return user;
     }
+
+
+    /// <summary>
+    /// 获取模块
+    /// </summary>
+    /// <returns></returns>
+    public User GetUserEntityByLoginName(string loginName)
+    {
+        loginName.NotNull("登录名为空");
+        var user = _dbContext.User.FirstOrDefault(x => x.LoginName.Equals(loginName));
+        user = user.NotNull("当前数据不存在");
+        var userRoles = _dbContext.UserRole.AsNoTracking().Where(x => x.UserCode == user.Code).ToList();
+        if (userRoles.Count > 0)
+        {
+            var roles = new string[userRoles.Count];
+            for (int i = 0; i < userRoles.Count; i++)
+            {
+                roles[i] = userRoles[i].RoleCode;
+            }
+
+            user.Roles = roles;
+
+        }
+        _logger.LogWarning("登录获取用户{code}：{user}", user.Code, user);
+        return user;
+    }
+
+
 
 }

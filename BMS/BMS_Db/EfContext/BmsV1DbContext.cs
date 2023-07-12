@@ -7,6 +7,9 @@ public class BmsV1DbContext : DbContext
     public DbSet<User> User { get; set; }
     public DbSet<Module> Module { get; set; }
     public DbSet<NLog> NLog { get; set; }
+    public DbSet<Role> Role { get; set; }
+    public DbSet<UserRole> UserRole { get; set; }
+    public DbSet<MenuRole> MenuRole { get; set; }
 
     public BmsV1DbContext(DbContextOptions<BmsV1DbContext> options) : base(options) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

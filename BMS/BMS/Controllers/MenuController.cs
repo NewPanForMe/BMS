@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ys.Tools.Controllers;
+using Ys.Tools.Models;
 using Ys.Tools.Response;
 
 namespace BMS.Controllers
@@ -25,7 +26,9 @@ namespace BMS.Controllers
         [HttpGet]
         public async Task<ApiResult> Menu()
         {
-            var menuNode =await _moduleBll.GetMenuNode();
+          Console.WriteLine(CurrentUser.ToString());
+            CurrentUser.ListRole.ToList().ForEach(x => { Console.WriteLine($"角色：{x}"); });
+            var menuNode =await _moduleBll.GetMenuNode(CurrentUser.ListRole);
             await _dbContext.SaveChangesAsync();
             return ApiResult.True(new { menuNode });
         }
