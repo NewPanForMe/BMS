@@ -8,11 +8,13 @@
 
   <ItemGroup>
     <Folder Include="BLL\Role\" />
+    <Folder Include="BLL\Sms\" />
     <Folder Include="EfContext\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ys.Tools" Version="1.1.18" />
+    <PackageReference Include="BMS_SMS" Version="1.0.0" />
+    <PackageReference Include="Ys.Tools" Version="1.1.19" />
   </ItemGroup>
 
   <ItemGroup>

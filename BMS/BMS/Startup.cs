@@ -11,6 +11,7 @@ using Ys.Tools.Interface;
 using System.Text.RegularExpressions;
 using BMS_Base.MiddleWare;
 using BMS_Db.WindowsServices;
+using BMS_SMS.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -78,6 +79,8 @@ public class Startup
         RegisterToken(services);
         //获取SystemConfig
         RegisterSystem(services);
+        //获取SmsBaseConfig
+        RegisterSms(services);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -225,5 +228,14 @@ public class Startup
         service.Configure<SystemConfig>(_configuration.GetSection("SystemConfig"));
         _configuration.Bind("SystemConfig", SystemConfig.Instance);
 
+    }
+    /// <summary>
+    /// 注入SMS
+    /// </summary>
+    /// <param name="service"></param>
+    private void RegisterSms(IServiceCollection service)
+    {
+        service.Configure<SmsBaseConfig>(_configuration.GetSection("SmsBaseConfig"));
+        _configuration.Bind("SmsBaseConfig", SmsBaseConfig.Instance);
     }
 }

@@ -26,7 +26,7 @@ namespace BMS.Controllers
         [HttpGet]
         public async Task<ApiResult> Menu()
         {
-            var menuNode = await _moduleBll.GetMenuNode(CurrentUser.ListRole);
+            var menuNode = await _moduleBll.GetMenuNode(CurrentUser?.ListRole??new string[]{});
             await _dbContext.SaveChangesAsync();
             return ApiResult.True(new { menuNode });
         }
