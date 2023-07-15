@@ -27,7 +27,7 @@ namespace BMS.Controllers
         [HttpGet]
         public async Task<ApiResult> GetLogList()
         {
-            var data = await _logBll.GetLogs(100);
+            var data = await _logBll.GetLogs(50);
             var pagination = new Pagination()
             {
                 DefaultPageSize = 5,//默认多少条

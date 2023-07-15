@@ -25,10 +25,7 @@
                     <t-option key="女" label="女" value="女" />
                 </t-select>
             </t-form-item>
-            <t-form-item label="手机号" name="Phone" help="手机号可以用来短信登录">
-                <t-input v-model="formData.Phone" placeholder="请输入手机号" @enter="onEnter"></t-input>
-            </t-form-item>
-            <t-form-item label="邮件" name="Mail"  help="邮件可以接收系统发出的通知短信">
+            <t-form-item label="邮件" name="Mail"  help="邮件可以接收系统发出的通知邮件">
                 <t-input v-model="formData.Mail" placeholder="请输入邮件" @enter="onEnter"></t-input>
             </t-form-item>
             <t-form-item>
@@ -79,7 +76,6 @@ const formData = reactive({
     Roles: [],
     IdCard:"",
     Gender:"",
-    Phone:"",
     Mail:""
 });
 
@@ -126,7 +122,6 @@ const getTableEntity = () => {
             formData.Name = resp.result.data.name;
             formData.Roles = resp.result.data.roles;
             formData.IdCard = resp.result.data.idCard;
-            formData.Phone = resp.result.data.phone;
             formData.Gender = resp.result.data.gender;
             roleStrings.value = resp.result.data.roles;
             console.log(resp.result.data);

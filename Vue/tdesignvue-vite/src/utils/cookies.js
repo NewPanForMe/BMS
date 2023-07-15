@@ -7,16 +7,11 @@ const userCode = "UserCode";
 
 const cookie = {
     saveToken(resp) {
-        const token =resp.token;
-        const version = resp.jwtVersion;
-        const refresh = resp.refreshToken;
-        const name = resp.name;
-        const code = resp.code;
-        cookies.set(tokenName, token);
-        cookies.set(jwtVersion, version);
-        cookies.set(refreshToken, refresh);
-        cookies.set(userName, name);
-        cookies.set(userCode, code);
+        cookies.set(tokenName, resp.token);
+        cookies.set(jwtVersion, resp.jwtVersion);
+        cookies.set(refreshToken,  resp.refreshToken);
+        cookies.set(userName,  resp.name);
+        cookies.set(userCode,  resp.code);
     },
     getToken() {
         var param = {

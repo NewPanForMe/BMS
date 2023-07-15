@@ -36,6 +36,7 @@ const onConfirmAnother = (context) => {
 
 const options = [
     { content: "个人信息", value: "/user_info" },
+    { content: "绑定手机号", value: "/user_bind_phone" },
 ];
 const clickHandler = (data) => {
     $router.push({path:data.value})

@@ -5,6 +5,7 @@ const api = {
         Edit: window.config.baseUrl + "/User/Update",
         Delete: window.config.baseUrl + "/User/Delete",
         GetEntityByCode: window.config.baseUrl + "/User/GetEntityByCode",
+        BindPhone: window.config.baseUrl + "/User/BindPhone",
     },
     module: {
         GetModuleList: window.config.baseUrl + "/Module/GetList",
@@ -39,5 +40,9 @@ const api = {
         GetEntityByCode: window.config.baseUrl + "/Role/GetEntityByCode",
         GetRoleOptions:window.config.baseUrl + "/Role/GetRoleOptions",
     },
+    sms:{
+        SendBindCode:window.config.baseUrl + "/Sms/SendBindCode",
+        SendRegisterCode:window.config.baseUrl + "/Sms/SendRegisterCode",
+    }
 }
 export default api

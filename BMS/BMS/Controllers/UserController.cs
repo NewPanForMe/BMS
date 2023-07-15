@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using BMS_Db.BLL.Module;
 using BMS_Db.BLL.User;
 using BMS_Db.EfContext;
@@ -20,11 +21,11 @@ namespace BMS.Controllers
     [Authorize]
     public class UserController : BaseController
     {
-        private readonly  UserBaseBll _userBaseBll;
-        private readonly  BmsV1DbContext _dbContext;
-        private readonly  ILogger<UserController> _logger;
+        private readonly UserBaseBll _userBaseBll;
+        private readonly BmsV1DbContext _dbContext;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(UserBaseBll userBaseBll,  ILogger<UserController> logger, BmsV1DbContext dbContext)
+        public UserController(UserBaseBll userBaseBll, ILogger<UserController> logger, BmsV1DbContext dbContext)
         {
             _userBaseBll = userBaseBll;
             _logger = logger;
@@ -33,7 +34,7 @@ namespace BMS.Controllers
         [HttpPost]
         public ApiResult Add(User user)
         {
-            
+
             _userBaseBll.Add(user);
             _dbContext.SaveChanges();
             return ApiResult.True();
@@ -43,7 +44,7 @@ namespace BMS.Controllers
         public ApiResult Update(User user)
         {
             _userBaseBll.Edit(user);
-                _dbContext.SaveChanges();
+            _dbContext.SaveChanges();
             return ApiResult.True();
         }
         [HttpPost]
@@ -73,5 +74,14 @@ namespace BMS.Controllers
             var data = _userBaseBll.GetUserEntityByCode(code);
             return ApiResult.True(new { data });
         }
+
+        [HttpPost]
+        public void BindPhone(JsonElement req)
+        {
+            //RootElement=ValueKind = Object : "{"Id":0,"Code":"4f11a6cc-4cf9-cdb2-5a23-42b2656c95b7","Phone":"17605254921","V...
+            Console.WriteLine(req.GetString());
+        }
+
+
     }
 }

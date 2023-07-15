@@ -11,7 +11,7 @@ public class SmsBll:IBll
     /// </summary>
     /// <param name="phoneNumber">手机号</param>
     /// <param name="code">验证码</param>
-    public async void SendSmsCode(string phoneNumber,string code)
+    public async Task<SmsResult> SendSmsCode(string phoneNumber,string code)
     {
         var param = new Param()
         {
@@ -19,11 +19,12 @@ public class SmsBll:IBll
         };
         SmsSendConfig.Instance = new SmsSendConfig()
         {
-            SignName = "BMS",
+            SignName = "袁赛的博客",
             TemplateCode = "SMS_461325435",
             TemplateParam = JsonTools.Serialize(param)
         };
-        await BMS_SMS.Base.BaseSms.Instance.Send(phoneNumber);
+        var smsResult = await BMS_SMS.Base.BaseSms.Instance.Send(phoneNumber);
+        return smsResult;
     }
   
     class Param

@@ -25,6 +25,12 @@ const router = [
         component: () => import('@/views/user/info.vue'),
     },
     {
+        path: "/user_bind_phone",
+        name: "user_bind_phone",
+        meta: { title: "用户手机号绑定" },
+        component: () => import('@/views/user/phone.vue'),
+    },
+    {
         path: "/order",
         name: "order",
         meta: { title: "订单" },
