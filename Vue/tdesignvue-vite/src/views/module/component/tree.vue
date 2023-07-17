@@ -1,5 +1,5 @@
 <template>
-    <t-tree :data="items" activable hover transition :onClick="actived" />
+    <t-tree :data="items" activable hover transition :onClick="actived"  />
 </template>
 <script setup>
 import { ref ,defineEmits} from "vue";
@@ -14,6 +14,7 @@ const GetModule = ()=>{
 }
 GetModule();
 const actived = (e) => {
-    emit("ClickNode", e.node);
+    emit("ClickNode", e.node.data);
 };
+
 </script>

@@ -24,7 +24,6 @@ public class LogBll : IBll
     public async Task<List<NLog>> GetLogs(int count)
     {
         var listAsync = await _dbContext.NLog.OrderByDescending(x=>x.Logged).Take(count).ToListAsync();
-        _logger.LogWarning("获取日志列表：{newList}", listAsync.Count);
         return listAsync;
     }
 

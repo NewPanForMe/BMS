@@ -85,7 +85,7 @@ public class RoleBll:IBll
     public void Delete(BMS_Models.DbModels.Role role)
     {
         _dbContext.Role.Remove(role);
-        _logger.LogWarning("删除用户：{user}", role);
+        _logger.LogWarning("删除角色：{user}", role);
 
     }
 
@@ -96,7 +96,6 @@ public class RoleBll:IBll
     public async Task<List<BMS_Models.DbModels.Role>> GetRole()
     {
         var listAsync = await _dbContext.Role.OrderBy(x=>x.OrderBy).AsNoTracking().ToListAsync();
-        _logger.LogWarning("获取角色列表：{role}", listAsync.Count);
         return (listAsync);
     }
 

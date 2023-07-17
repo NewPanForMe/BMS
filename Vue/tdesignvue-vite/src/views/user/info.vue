@@ -16,6 +16,9 @@
             <t-form-item label="角色" name="IsDelete">
                 <t-select :readonly="true" v-model="roleStrings" :options="roleList" placeholder="请选择角色" multiple />
             </t-form-item>
+            <t-form-item label="手机号" name="Phone">
+                <t-input v-model="formData.Phone" placeholder="请输入手机号"    :readonly="true" @enter="onEnter"></t-input>
+            </t-form-item>
             <t-form-item label="身份证号" name="IdCard">
                 <t-input v-model="formData.IdCard" placeholder="请输入身份证号" @enter="onEnter"></t-input>
             </t-form-item>
@@ -31,8 +34,6 @@
             <t-form-item>
                 <t-space size="small">
                     <t-button theme="primary" type="submit">提交</t-button>
-                    <!-- <t-button theme="default" variant="base" type="reset">重置</t-button> -->
-                    <!-- <t-button theme="default" variant="base" @click="back">返回</t-button> -->
                 </t-space>
             </t-form-item>
             <t-input v-model="formData.Code" hidden></t-input>
@@ -76,7 +77,8 @@ const formData = reactive({
     Roles: [],
     IdCard:"",
     Gender:"",
-    Mail:""
+    Mail:"",
+    Phone:""
 });
 
 const FORM_RULES = {
@@ -123,6 +125,7 @@ const getTableEntity = () => {
             formData.Roles = resp.result.data.roles;
             formData.IdCard = resp.result.data.idCard;
             formData.Gender = resp.result.data.gender;
+            formData.Phone = resp.result.data.phone;
             roleStrings.value = resp.result.data.roles;
             console.log(resp.result.data);
             console.log(formData);

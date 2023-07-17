@@ -4,7 +4,7 @@ const jwtVersion = "JwtVersion";
 const refreshToken = "RefreshToken";
 const userName = "Name";
 const userCode = "UserCode";
-
+cookies.config("20min")
 const cookie = {
     saveToken(resp) {
         cookies.set(tokenName, resp.token);

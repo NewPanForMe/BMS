@@ -9,24 +9,11 @@
         <t-row :gutter="16">
             <t-col :span="2">
                 <t-card title="所有模块" header bordered hover-shadow>
-                    <tree @click-node="TreeNodeCick" />
+                    <tree @click-node="TreeNodeClick" />
                 </t-card>
             </t-col>
             <t-col :span="10">
-                <t-table
-                    row-key="index"
-                    :data="list.data"
-                    :columns="columns"
-                    bordered
-                    hover
-                    table-layout="fixed"
-                    size="small"
-                    :pagination="list.pagination"
-                    cell-empty-content="-"
-                    resizable
-                    @row-click="handleRowClick"
-                >
-                </t-table>
+                <baseTable   ref="table" :columns="columns" :Param="param" :listUrl="listUrl" @row-click="handleRowClick" />
             </t-col>
         </t-row>
     </div>
@@ -37,16 +24,15 @@
 import $instance from "@/utils/http";
 import $api from "@/api/index";
 import $router from '@/router/router'
-import { ref, reactive, defineComponent } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import tree from "./component/tree.vue";
 import baseTable from "@/components/table/baseTable.vue";
 import { MessagePlugin } from "tdesign-vue-next";
 import { AddIcon } from "tdesign-icons-vue-next";
-let list = reactive({
-    pagination: { defaultCurrent: 1, defaultPageSize: 5, total: 0 },
-    data: [],
-});
-let TreeNodeValue=ref("")
+var listUrl=ref($api.module.GetModuleList);
+let table =ref(null)
+let param =ref({})
+let TreeNodeValue=ref(null)
 const columns = [
     { colKey: "path", title: "路径", align: "center" }, // width: "100"
     {
@@ -92,6 +78,19 @@ const columns = [
         align: "center",
     },
 ];
+
+onMounted(() => {
+  loadTable()
+})
+const loadTable=()=>{
+    table.value.getTableList()
+}
+const TreeNodeClick = (e) => {
+    TreeNodeValue.value = e.value;
+    param.value={treeCode:e.value}
+    loadTable()
+};
+
 const addModule = () => {
     if (TreeNodeValue.value == "") {
         MessagePlugin.error("请选择节点");
@@ -99,6 +98,7 @@ const addModule = () => {
     }
   $router.push({path:"/module_add/add/"+TreeNodeValue.value +"/code"});
 };
+
 const onEdit = (row) => {
     $router.push({name:"module_add" ,params:{
         code:row.code,
@@ -106,6 +106,7 @@ const onEdit = (row) => {
         type:"edit",
     }});
 };
+
 const onDelete = (row) => {
     console.log(row);
     $instance.post($api.module.Delete, row).then((resp) => {
@@ -115,31 +116,7 @@ const onDelete = (row) => {
         }
     });
 };
-let data = ref({
-    Id: 0,
-    Code: "",
-    Name: "",
-    Path: "",
-    Icon: "",
-    Value: "",
-    ParentCode: "",
-    ParentName: "",
-    IsShow: true,
-    Type: "",
-});
-const getTableList = (url) => {
-    if (url == null) url = $api.module.GetModuleList;
-    $instance.get(url).then((resp) => {
-        list.data = resp.result.data;
-        list.pagination = resp.result.pagination;
-    });
-};
-getTableList($api.module.GetModuleList);
-const handleRowClick = (e) => {};
 
-const TreeNodeCick = (e) => {
-    TreeNodeValue.value = e.value;
-    getTableList($api.module.GetModuleList + "?value=" + TreeNodeValue.value);
-};
+const handleRowClick = (e) => {};
 
 </script>

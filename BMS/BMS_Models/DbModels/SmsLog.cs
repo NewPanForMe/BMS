@@ -1,6 +1,6 @@
 ﻿namespace BMS_Models.DbModels;
 
-public class SmsLog
+public record SmsLog
 {
     /// <summary>
     /// 主键
@@ -30,8 +30,12 @@ public class SmsLog
     /// 接口返回结果
     /// </summary>
     public string SmsResult { get; set; } = string.Empty;
+    /// <summary>
+    /// 过期时间
+    /// </summary>
+    public DateTime ExpireDate { get; set; } = DateTime.Now;
 
 
-
+    
 
 }

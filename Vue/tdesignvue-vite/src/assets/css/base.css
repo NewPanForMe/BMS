@@ -26,7 +26,7 @@ body {
 /* 登录主题 */
  .login .login-content {
     width: 350px;
-    height: 25%;
+    height: 28%;
     background-color: rgb(255, 243, 243);
     box-shadow: 5px 5px 150px 0px rgb(97, 94, 94);
     border-radius: 15px;
@@ -38,7 +38,7 @@ body {
 }
 /* 登录按钮 */
 .login .login-button{
-    padding:  5px 5vh 5px 5vh;
+    padding:  5px 5vh 10px 5vh;
 }
 /* 登录主题文字 */
 .login .login-text{
@@ -46,6 +46,18 @@ body {
     font-size: 30px;
     text-align: center;
 }
+/* 登录主体更多 */
+.login .login-more{
+    text-align: center;
+}
+/* 登录主体更多按钮字体颜色 */
+.login .login-more .t-button__text{
+   color: #8876eb;
+}
+
+
+
+
 /* 菜单栏 */
 .layout .t-layout__sider{
     height: 100vh;

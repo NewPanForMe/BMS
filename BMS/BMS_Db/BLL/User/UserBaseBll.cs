@@ -21,7 +21,6 @@ public class UserBaseBll : IBll
     {
         _dbContext = dbContext;
         _logger = logger;
-        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
     /// <summary>
@@ -116,7 +115,6 @@ public class UserBaseBll : IBll
     public async Task<List<User>> GetUser()
     {
         var listAsync = await _dbContext.User.AsNoTracking().ToListAsync();
-        _logger.LogWarning("获取用户列表：{user}", listAsync.Count);
         return (listAsync);
     }
 
@@ -130,9 +128,9 @@ public class UserBaseBll : IBll
     public  User GetUserEntityByCode(string code)
     {
         code.NotNull("传入编号为空");
-        var user = _dbContext.User.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
+        var user = _dbContext.User.FirstOrDefault(x => x.Code.Equals(code));
         user = user.NotNull("当前数据不存在");
-        var userRoles =  _dbContext.UserRole.AsNoTracking().Where(x => x.UserCode == code).ToList();
+        var userRoles =  _dbContext.UserRole.Where(x => x.UserCode == code).ToList();
         if (userRoles.Count > 0)
         {
             var roles = new string[userRoles.Count];
@@ -144,7 +142,6 @@ public class UserBaseBll : IBll
             user.Roles = roles;
 
         }
-        _logger.LogWarning("获取用户{code}：{user}", code, user);
         return user;
     }
 
@@ -156,7 +153,7 @@ public class UserBaseBll : IBll
     public User GetUserEntityByLoginName(string loginName)
     {
         loginName.NotNull("登录名为空");
-        var user = _dbContext.User.FirstOrDefault(x => x.LoginName.Equals(loginName));
+        var user = _dbContext.User.FirstOrDefault(x => x.LoginName.Equals(loginName) || x.Phone==(loginName));
         user = user.NotNull("当前数据不存在");
         var userRoles = _dbContext.UserRole.AsNoTracking().Where(x => x.UserCode == user.Code).ToList();
         if (userRoles.Count > 0)
@@ -170,10 +167,41 @@ public class UserBaseBll : IBll
             user.Roles = roles;
 
         }
-        _logger.LogWarning("登录获取用户{code}：{user}", user.Code, user);
         return user;
     }
 
+    /// <summary>
+    /// 获取模块
+    /// </summary>
+    /// <returns></returns>
+    public User GetUserEntityByCodeWithNoTracking(string code)
+    {
+        code.NotNull("传入编号为空");
+        var user = _dbContext.User.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
+        user = user.NotNull("当前数据不存在");
+        var userRoles = _dbContext.UserRole.AsNoTracking().Where(x => x.UserCode == code).ToList();
+        if (userRoles.Count > 0)
+        {
+            var roles = new string[userRoles.Count];
+            for (int i = 0; i < userRoles.Count; i++)
+            {
+                roles[i] = userRoles[i].RoleCode;
+            }
 
+            user.Roles = roles;
 
+        }
+        return user;
+    }
+
+    /// <summary>
+    /// 判断手机号是否已存在
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPhoneExist(string phone)
+    {
+        phone.NotNull("传入手机号为空");
+        var user = _dbContext.User.Any(x => x.Phone ==phone);
+        return user;
+    }
 }

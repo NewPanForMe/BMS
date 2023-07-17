@@ -53,9 +53,9 @@ namespace BMS.Controllers
         }
 
         [HttpGet]
-        public async Task<ApiResult> GetList(string? value)
+        public async Task<ApiResult> GetList(string? treeCode)
         {
-            var data = await _moduleBll.GetModules(value??"");
+            var data = await _moduleBll.GetModules(treeCode ?? "");
             var pagination = new Pagination()   
             {
                 DefaultPageSize = 5,//默认多少条

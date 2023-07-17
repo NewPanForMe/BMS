@@ -31,6 +31,12 @@ const router = [
         component: () => import('@/views/user/phone.vue'),
     },
     {
+        path: "/user_password",
+        name: "user_password",
+        meta: { title: "用户修改密码" },
+        component: () => import('@/views/user/password.vue'),
+    },
+    {
         path: "/order",
         name: "order",
         meta: { title: "订单" },

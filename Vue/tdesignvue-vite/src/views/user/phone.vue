@@ -34,7 +34,8 @@ const formData = reactive({
     Id: 0,
     Code: code,
     Phone: "",
-    VerifyCode: ""
+    VerifyCode: "",
+    LogCode:""
 });
 
 const FORM_RULES = {
@@ -53,6 +54,7 @@ const SendMsg = () => {
             MessagePlugin.success("发送成功")
             timer = setInterval(timeLess, 1000)
             IsSendMsgButton.value = true;
+            formData.LogCode = resp.result.code;
         }
         else {
             reset();
@@ -80,8 +82,10 @@ const onSubmit = ({ validateResult, firstError }) => {
     console.log(formData);
     if (validateResult === true) {
         $instance.post($api.user.BindPhone, formData).then((resp) => {
-            if (resp.success) {
-                MessagePlugin.success("成功");
+            if (!resp.success) {
+                MessagePlugin.warning(resp.result);
+            }else{
+                MessagePlugin.success("绑定成功");
             }
         });
     } else {

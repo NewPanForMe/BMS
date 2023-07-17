@@ -1,7 +1,7 @@
 <template>
     <t-table row-key="index" :data="list.data" :columns="columns" bordered hover table-layout="fixed" size="small"
         :pagination="list.pagination" cell-empty-content="-" resizable @row-click="handleRowClick" :loading="loading"
-        :refresh-table="refreshTable">
+      >
     </t-table>
 </template>
 <script setup >
@@ -14,13 +14,13 @@ let list = ref({
 var prop = defineProps({
     columns: {type:Array,default:()=>[]},
     listUrl: String,
-    refreshTable:false
+    Param:{}
 })
 const loading = ref(false)
 const emit = defineEmits(["rowClick"]);
 const getTableList = () => {
     loading.value = !loading.value
-    $instance.get(prop.listUrl).then((resp) => {
+    $instance.get(prop.listUrl,{params:prop.Param}).then((resp) => {
         loading.value = !loading.value
         list.value.data = resp.result.data;
         list.value.pagination = resp.result.pagination;

@@ -66,7 +66,6 @@ public class ModuleBll : IBll
     {
         var listAsync = await _dbContext.Module.AsNoTracking().ToListAsync();
         var newList = string.IsNullOrEmpty(value) ? listAsync : listAsync.Where(x => x.ParentCode == value).ToList();
-        _logger.LogWarning("获取模块列表：{newList}", newList.Count);
         return newList;
     }
 
@@ -94,7 +93,6 @@ public class ModuleBll : IBll
     {
         var listAsync = await _dbContext.Module.AsNoTracking().ToListAsync();
         var trees = GetTree(listAsync, "father");
-        _logger.LogWarning("获取模块树结构：{module}", trees.Count);
         return trees;
     }
 
@@ -138,7 +136,6 @@ public class ModuleBll : IBll
         });
         listAsync = listAsync.Where(x => x.IsShow).ToList();
         var menus = GetMenu(listAsync, "root");
-        _logger.LogWarning("获取菜单：{menus}", menus.Count);
         return menus;
     }
     /// <summary>

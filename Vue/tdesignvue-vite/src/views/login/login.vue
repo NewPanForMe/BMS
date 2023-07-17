@@ -4,13 +4,12 @@
             <p class="login-text"><strong>BMS后台管理系统</strong></p>
             <t-form ref="form" :data="formData" :colon="true" :label-width="0" @reset="onReset" @submit="onSubmit">
                 <t-form-item name="username">
-                    <t-input v-model="formData.username" clearable placeholder="请输入账户名">
+                    <t-input v-model="formData.username" clearable placeholder="请输入账户名/手机号">
                         <template #prefix-icon>
                             <desktop-icon />
                         </template>
                     </t-input>
                 </t-form-item>
-
                 <t-form-item name="password">
                     <t-input v-model="formData.password" type="password" clearable placeholder="请输入密码">
                         <template #prefix-icon>
@@ -22,6 +21,11 @@
                     <t-form-item>
                         <t-button theme="primary" type="submit" block :loading="loadding">登录</t-button>
                     </t-form-item>
+                </div>
+                <div class="login-more">
+                    <t-space>
+                        <t-button theme="default" variant="text" ghost>忘记密码</t-button>
+                    </t-space>
                 </div>
             </t-form>
         </div>
@@ -38,7 +42,7 @@ export default {
                 username: "",
                 password: "",
             }),
-            loadding:false
+            loadding: false,
         };
     },
     methods: {
@@ -50,7 +54,6 @@ export default {
                 return false;
             }
             this.$instance.post(this.$api.login.checkUserName, this.formData).then((resp) => {
-           
                 this.$cookies.saveToken(resp.result);
                 this.$router.push("/index");
             });

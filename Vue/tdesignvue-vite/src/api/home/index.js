@@ -6,6 +6,8 @@ const api = {
         Delete: window.config.baseUrl + "/User/Delete",
         GetEntityByCode: window.config.baseUrl + "/User/GetEntityByCode",
         BindPhone: window.config.baseUrl + "/User/BindPhone",
+        EditPassword: window.config.baseUrl + "/User/EditPassword",
+        
     },
     module: {
         GetModuleList: window.config.baseUrl + "/Module/GetList",
