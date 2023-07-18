@@ -4,7 +4,7 @@ const router = [
         path: "/index",
         name: "index",
         meta:{title:"框架"},
-        component: () => import('@/views/layout/index.vue'),
+        component: () => import('@/views/system/layout/index.vue'),
         children:[
            ...home
         ]

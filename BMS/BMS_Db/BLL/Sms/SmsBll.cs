@@ -1,11 +1,15 @@
-﻿using BMS_Db.BLL.User;
+﻿using BMS_Db.BLL.Module;
+using BMS_Db.BLL.User;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
 using BMS_SMS.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Ys.Tools.Extra;
 using Ys.Tools.Interface;
 using Ys.Tools.MoreTool;
+using Ys.Tools.Response;
 
 namespace BMS_Db.BLL.Sms;
 
@@ -20,6 +24,7 @@ public class SmsBll:IBll
     {
         _dbContext = dbContext;
         _logger = logger;
+        _dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
 
@@ -61,5 +66,17 @@ public class SmsBll:IBll
         var smsLog = _dbContext.SmsLog.FirstOrDefault(x => x.Code.Equals(code)).NotNull("当前数据不存在"); ;
         _logger.LogWarning("获取短信日志{code}：{user}", code, smsLog);
         return smsLog;
+    }
+
+
+
+    /// <summary>
+    /// 获取列表
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<SmsLog>> GetSmsLogs()
+    {
+        var listAsync = await _dbContext.SmsLog.OrderByDescending(x=>x.SendTime).AsNoTracking().ToListAsync();
+        return listAsync;
     }
 }

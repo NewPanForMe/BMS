@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using BMS_Db.BLL.Module;
 using BMS_Db.BLL.Sms;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
@@ -65,6 +66,22 @@ namespace BMS.Controllers
             _dbContext.SmsLog.Add(smsLog);
             await _dbContext.SaveChangesAsync();
             return ApiResult.True(new { sendSmsCode.Message , smsLog.Code});
+        }
+
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ApiResult> GetList()
+        {
+            var data = await _smsBll.GetSmsLogs();
+            var pagination = new Pagination()
+            {
+                DefaultPageSize = 5,//默认多少条
+                DefaultCurrent = 1,
+                Total = data.Count
+            };
+            return ApiResult.True(new { data, pagination });
         }
     }
 }

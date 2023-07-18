@@ -65,10 +65,10 @@ public class UserBaseBll : IBll
     /// <returns></returns>
     public  void Edit(User user)
     {
-        var userEntityByCode = _dbContext.User.AsNoTracking().FirstOrDefault(x => x.Code.Equals(user.Code));
+        var userEntityByCode = _dbContext.User.FirstOrDefault(x => x.Code.Equals(user.Code));
         userEntityByCode = userEntityByCode.NotNull("未找到数据");
         user.LoginPassword = string.IsNullOrEmpty(user.LoginPassword) ? userEntityByCode.LoginPassword : Md5Tools.MD5_32(user.LoginPassword + userEntityByCode.LoginPasswordSalt);
-
+        user.JwtVersion = userEntityByCode.JwtVersion;
         user.ErrorCount = userEntityByCode.ErrorCount;
         user.ErrorCancelTime = userEntityByCode.ErrorCancelTime;
         user.LoginPasswordSalt = userEntityByCode.LoginPasswordSalt;

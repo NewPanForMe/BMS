@@ -13,7 +13,10 @@ using BMS_Base.MiddleWare;
 using BMS_Db.WindowsServices;
 using BMS_SMS.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BMS;
 
@@ -66,6 +69,12 @@ public class Startup
         });
 
         services.AddMemoryCache();
+   
+        services.Configure<FormOptions>(x =>
+        {
+            x.MultipartHeadersLengthLimit = 300000000;//文件最大300M
+        });
+
 
         //services.AddHostedService<ResetUserService>();
         RegisterNLog(services);
@@ -81,6 +90,9 @@ public class Startup
         RegisterSystem(services);
         //获取SmsBaseConfig
         RegisterSms(services);
+
+
+  
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,6 +104,13 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        app.UseStaticFiles(new StaticFileOptions()
+        {
+            FileProvider = new PhysicalFileProvider(AppDomain.CurrentDomain.BaseDirectory+SystemConfig.Instance.UploadFileFolder),
+            RequestPath = "/"+SystemConfig.Instance.UploadFileFolder
+        });
+        app.UseStaticFiles();
+
         app.UseRouting();
         //UseCors 必须放在 之后 UseRouting 和之前 UseAuthorization。
         //这是为了确保 CORS 标头包含在已授权和未经授权的调用的响应中。
@@ -100,7 +119,9 @@ public class Startup
         app.UseAuthorization();
         app.UseResponseCaching();
         app.UseMiddleware<ExceptionMiddleWare>();
-       // app.UseMiddleware<JwtVersionMiddleWare>();
+
+     
+        // app.UseMiddleware<JwtVersionMiddleWare>();
 
         app.UseEndpoints(x =>
         {

@@ -18,5 +18,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/\/BmsV1Service/, "BmsV1Service"), // 路径重写
       },
     },
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: ['..'],
+    },
   },
 })

@@ -45,6 +45,12 @@ const api = {
     sms:{
         SendBindCode:window.config.baseUrl + "/Sms/SendBindCode",
         SendRegisterCode:window.config.baseUrl + "/Sms/SendRegisterCode",
+        GetSmsList: window.config.baseUrl + "/Sms/GetList",
+    },
+    file:{
+        FileUpload: window.config.baseUrl + "/File/Upload",
+        GetFileList: window.config.baseUrl + "/File/GetList",
+
     }
 }
 export default api

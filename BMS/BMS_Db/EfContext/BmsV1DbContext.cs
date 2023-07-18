@@ -11,6 +11,7 @@ public class BmsV1DbContext : DbContext
     public DbSet<UserRole> UserRole { get; set; }
     public DbSet<MenuRole> MenuRole { get; set; }
     public DbSet<SmsLog> SmsLog { get; set; }
+    public DbSet<FileUpload> FileUpload { get; set; }
 
     public BmsV1DbContext(DbContextOptions<BmsV1DbContext> options) : base(options) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

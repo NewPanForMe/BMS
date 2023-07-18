@@ -9,12 +9,13 @@
   <ItemGroup>
     <Folder Include="BLL\Role\" />
     <Folder Include="BLL\Sms\" />
+    <Folder Include="BLL\File\" />
     <Folder Include="EfContext\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BMS_SMS" Version="1.0.2" />
-    <PackageReference Include="Ys.Tools" Version="1.1.19" />
+    <PackageReference Include="Ys.Tools" Version="1.1.20" />
   </ItemGroup>
 
   <ItemGroup>
