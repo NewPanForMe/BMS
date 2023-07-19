@@ -1,5 +1,5 @@
 <template>
-    <t-space  direction="vertical">
+    <t-space direction="vertical">
         <!-- allow-upload-duplicate-file: false  不允许上传名称相同的文件 -->
         <!-- autoUpload: false  是否在选择文件后自动发起请求上传文件 -->
         <t-upload
@@ -11,17 +11,17 @@
             :multiple="multiple"
             :auto-upload="autoUpload"
             :response="response"
-            :size-limit="{ size: 300, unit: 'MB' , message: '图片大小不超过 {sizeLimit} MB' }"
+            :size-limit="{ size: 300, unit: 'MB', message: '图片大小不超过300MB' }"
             :allow-upload-duplicate-file="false"
             @select-change="handleSelectChange"
             @fail="handleFail"
             @success="handleSuccess"
             @validate="onValidate"
             :before-upload="beforeUpload"
-            theme="file-flow"
+            :theme="theme"
             :codeStrings="codeStrings"
         />
-        <table style="min-width: 498px;max-width: 960px;text-align: center;">
+        <table style="min-width: 498px; max-width: 960px; text-align: center">
             <thead>
                 <tr>
                     <td>文件名称</td>
@@ -29,45 +29,58 @@
                 </tr>
             </thead>
             <tbody>
-                
+                    <tr v-for="item in fileList">
+                        <td>
+                            <a href={{ item.fullName }} > {{ item.fullName }}</a>
+                        </td>
+                        <td>
+                            <t-popconfirm content="确认删除吗" :onConfirm="deleteFile(item.code)"    > 
+                                <t-button  variant="text" theme="danger" ghost>删除</t-button>
+                            </t-popconfirm>
+                        </td>
+                    </tr>
             </tbody>
         </table>
     </t-space>
 </template>
-<script setup>
+<script setup lang="jsx">
 import { ref, watch } from "vue";
 import $api from "@/api/index";
 import { MessagePlugin } from "tdesign-vue-next";
 import $cookies from "@/utils/cookies";
+import $instance from "@/utils/http";
 const uploadRef1 = ref();
 const files1 = ref([]);
-const multiple = ref(true);
+const multiple = ref(false);
 const autoUpload = ref(true);
 const emit = defineEmits(["Resp"]);
-
+let fileList = ref([]);
 let action = ref($api.file.FileUpload);
 let header = ref({});
 let response = ref(null);
-const prop=defineProps({
-    codeStrings: {type:Array,default:()=>[]},
+const prop = defineProps({
+    codeStrings: { type: Array, default: () => [] },
+    theme: ref("single-input"),
 });
 const handleFail = ({ file }) => {
     MessagePlugin.error(`文件 ${file.name} 上传失败`);
     return;
 };
 
+
+
 const handleSelectChange = (files) => {
     console.log("onSelectChange", files);
 };
 
 const handleSuccess = (params) => {
-    let res = params.response[0]
+    let res = params.response[0];
     emit("Resp", res);
-    console.log(res)
+    console.log(res);
     if (res.success) {
         MessagePlugin.success("上传成功");
         return;
-    }else{
+    } else {
         MessagePlugin.warning(res.result);
         return;
     }
@@ -97,8 +110,17 @@ const beforeUpload = (file) => {
     };
 };
 
-const dealFileCode=()=>{
-    console.log(prop.codeStrings)
-}
+const dealFileCode = () => {
+    $instance.post($api.file.GetHasUploadList, { codes: prop.codeStrings.join() }).then((resp) => {
+        fileList.value = resp.result.data;
+    });
+};
 dealFileCode();
+const deleteFile=(code)=>{
+    $instance.post($api.file.Delete, {code:code}).then((resp) => {
+        if (resp.success) {
+            MessagePlugin.success("成功");
+        }
+    });
+}
 </script>

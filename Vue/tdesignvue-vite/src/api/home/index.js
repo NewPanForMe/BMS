@@ -50,7 +50,9 @@ const api = {
     file:{
         FileUpload: window.config.baseUrl + "/File/Upload",
         GetFileList: window.config.baseUrl + "/File/GetList",
-
+        GetHasUploadList: window.config.baseUrl + "/File/GetHasUploadList",
+        Delete: window.config.baseUrl + "/File/Delete",
+        
     }
 }
 export default api

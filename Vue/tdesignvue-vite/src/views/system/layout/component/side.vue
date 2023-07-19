@@ -1,12 +1,12 @@
 <template>
     <t-menu    :collapsed="collapsed">
         <template v-for="item in menu">
-            <t-menu-item value="home" to="/home">
+            <!-- <t-menu-item value="home" to="/home">
                 <template #icon>
                     <t-icon name="desktop" />
                 </template>
                 首页
-            </t-menu-item>
+            </t-menu-item> -->
             <template v-if="item.child.length == 0">
                 <t-menu-item value="{{ item.value }}" :to="item.path" :content="item.meta.title" >
                     <template #icon>

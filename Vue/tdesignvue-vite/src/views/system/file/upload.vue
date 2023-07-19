@@ -8,7 +8,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import upload from "@/components/file/upload.vue";
-
+const theme=ref("file-flow")
 const resp = (param) => {
     console.log(param);
 };

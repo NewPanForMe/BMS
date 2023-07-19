@@ -128,10 +128,13 @@ public class ModuleBll : IBll
     {
         var modules =await  _dbContext.Module.ToListAsync();
         var moduleRole =await _dbContext.MenuRole.Where(x=>roles.Contains(x.RoleCode)).Select(x=>x.ModuleCode).Distinct().AsNoTracking().ToListAsync();
+        //当前用户角色下所有的模块信息
         var listAsync = modules.Where(x=> moduleRole.Contains(x.Code)).ToList();
+        //查询出所有的父节点编码
         var parentCode = listAsync.Select(x=>x.ParentCode).Distinct().ToList();
         parentCode.ForEach(p =>
         {
+            //获取父节点
             listAsync.Add(modules.Single(x => x.Value == p));
         });
         listAsync = listAsync.Where(x => x.IsShow).ToList();

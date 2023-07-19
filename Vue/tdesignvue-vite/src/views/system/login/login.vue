@@ -55,7 +55,7 @@ export default {
             }
             this.$instance.post(this.$api.login.checkUserName, this.formData).then((resp) => {
                 this.$cookies.saveToken(resp.result);
-                this.$router.push("/home");
+                this.$router.push("/home2");
             });
         },
     },

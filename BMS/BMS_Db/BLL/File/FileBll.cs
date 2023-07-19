@@ -4,6 +4,7 @@ using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Ys.Tools.Extra;
 using Ys.Tools.Interface;
 
 namespace BMS_Db.BLL.File;
@@ -53,6 +54,38 @@ public class FileBll:IBll
     {
         var listAsync = await _dbContext.FileUpload.OrderByDescending(x => x.CreateDate).AsNoTracking().ToListAsync();
         return listAsync;
+    }
+
+    /// <summary>
+    /// 获取列表
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<FileUpload>> GetHasUploadList(string[] args)
+    {
+        var listAsync = await _dbContext.FileUpload.Where(x => args.Contains(x.Code))
+            .OrderByDescending(x => x.CreateDate).AsNoTracking().ToListAsync();
+        return listAsync;
+    }
+    /// <summary>
+    /// 删除
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns></returns>
+    public void Delete(FileUpload file)
+    {
+        _dbContext.FileUpload.Remove(file);
+    }
+
+    /// <summary>
+    /// 获取模块
+    /// </summary>
+    /// <returns></returns>
+    public FileUpload GetFileUploadEntityByCode(string code)
+    {
+        code.NotNull("传入编号为空");
+        var module = _dbContext.FileUpload.AsNoTracking().FirstOrDefault(x => x.Code.Equals(code));
+        module = module.NotNull("当前数据不存在");
+        return module;
     }
 
 }

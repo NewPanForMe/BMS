@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ys.Tools.Controllers;
+using Ys.Tools.Extra;
 using Ys.Tools.Response;
 
 namespace BMS.Controllers
@@ -49,7 +50,24 @@ namespace BMS.Controllers
         }
 
 
-
-
+        [HttpPost]
+        public async Task<ApiResult> GetHasUploadList(JsonElement req)
+        {
+            var jsonString = req.GetJsonString("codes");
+            var codeStrings = new string[] { };
+            if (!string.IsNullOrEmpty(jsonString))
+            {
+                codeStrings = jsonString.Split(',');
+            }
+            var data = await _fileBll.GetHasUploadList(codeStrings);
+            return ApiResult.True(new { data = data.Select(x => new { x.Code, x.FullName,x.Location }) });
+        }
+        [HttpPost]
+        public  ApiResult Delete(JsonElement req)
+        {
+            var jsonString = req.GetJsonString("code");
+            _fileBll.Delete(_fileBll.GetFileUploadEntityByCode(jsonString??""));
+            return ApiResult.True();
+        }
     }
 }

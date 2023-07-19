@@ -104,12 +104,7 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        app.UseStaticFiles(new StaticFileOptions()
-        {
-            FileProvider = new PhysicalFileProvider(AppDomain.CurrentDomain.BaseDirectory+SystemConfig.Instance.UploadFileFolder),
-            RequestPath = "/"+SystemConfig.Instance.UploadFileFolder
-        });
-        app.UseStaticFiles();
+      
 
         app.UseRouting();
         //UseCors 必须放在 之后 UseRouting 和之前 UseAuthorization。
