@@ -2,25 +2,12 @@
     <t-space direction="vertical">
         <!-- allow-upload-duplicate-file: false  不允许上传名称相同的文件 -->
         <!-- autoUpload: false  是否在选择文件后自动发起请求上传文件 -->
-        <t-upload
-            ref="uploadRef1"
-            method="post"
-            v-model="files1"
-            :action="action"
-            :headers="header"
-            :multiple="multiple"
-            :auto-upload="autoUpload"
-            :response="response"
-            :size-limit="{ size: 300, unit: 'MB', message: '图片大小不超过300MB' }"
-            :allow-upload-duplicate-file="false"
-            @select-change="handleSelectChange"
-            @fail="handleFail"
-            @success="handleSuccess"
-            @validate="onValidate"
-            :before-upload="beforeUpload"
-            :theme="theme"
-            :codeStrings="codeStrings"
-        />
+        <t-upload ref="uploadRef1" method="post" v-model="files1" :action="action" :headers="header" :multiple="multiple"
+            :auto-upload="autoUpload" :response="response" :size-limit="{ size: 300, unit: 'MB', message: '图片大小不超过300MB' }"
+            :allow-upload-duplicate-file="false" @select-change="handleSelectChange" @fail="handleFail"
+            @success="handleSuccess" @validate="onValidate" :before-upload="beforeUpload" :theme="theme"
+            showUploadProgress="true"
+            :codeStrings="codeStrings" />
         <table style="min-width: 498px; max-width: 960px; text-align: center">
             <thead>
                 <tr>
@@ -29,16 +16,16 @@
                 </tr>
             </thead>
             <tbody>
-                    <tr v-for="item in fileList">
-                        <td>
-                            <a href={{ item.fullName }} > {{ item.fullName }}</a>
-                        </td>
-                        <td>
-                            <t-popconfirm content="确认删除吗" :onConfirm="deleteFile(item.code)"    > 
-                                <t-button  variant="text" theme="danger" ghost>删除</t-button>
-                            </t-popconfirm>
-                        </td>
-                    </tr>
+                <tr v-for="item in fileList">
+                    <td>
+                        <a :href="url(item.location)" target="_blank"> {{ item.fullName }}</a>
+                    </td>
+                    <td>
+                        <t-popconfirm content="确认删除吗" @confirm="deleteFile(item.code)">
+                            <t-button variant="text" theme="danger" ghost>删除</t-button>
+                        </t-popconfirm>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </t-space>
@@ -116,11 +103,19 @@ const dealFileCode = () => {
     });
 };
 dealFileCode();
-const deleteFile=(code)=>{
-    $instance.post($api.file.Delete, {code:code}).then((resp) => {
+const deleteFile = (code) => {
+    $instance.post($api.file.Delete, { code: code }).then((resp) => {
         if (resp.success) {
             MessagePlugin.success("成功");
+            dealFileCode();
         }
     });
 }
+
+const url = (location) => {
+    return window.config.baseFileUrl + location;
+}
+
+
+
 </script>

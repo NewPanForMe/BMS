@@ -67,6 +67,7 @@ namespace BMS.Controllers
         {
             var jsonString = req.GetJsonString("code");
             _fileBll.Delete(_fileBll.GetFileUploadEntityByCode(jsonString??""));
+            _dbContext.SaveChanges();
             return ApiResult.True();
         }
     }
