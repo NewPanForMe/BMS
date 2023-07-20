@@ -8,7 +8,7 @@
             @success="handleSuccess" @validate="onValidate" :before-upload="beforeUpload" :theme="theme"
             showUploadProgress="true"
             :codeStrings="codeStrings" />
-        <table style="min-width: 498px; max-width: 960px; text-align: center">
+        <table style="min-width: 498px; max-width: 960px; text-align: center;"  >
             <thead>
                 <tr>
                     <td>文件名称</td>

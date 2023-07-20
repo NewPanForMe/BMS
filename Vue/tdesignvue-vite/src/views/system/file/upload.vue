@@ -1,7 +1,5 @@
 <template>
     <t-space>
-        <!-- allow-upload-duplicate-file: false  不允许上传名称相同的文件 -->
-        <!-- autoUpload: false  是否在选择文件后自动发起请求上传文件 -->
         <upload @Resp="resp"  :codeStrings="codeStrings" />
     </t-space>
 </template>

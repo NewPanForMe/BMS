@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using Ys.Tools.Controllers;
 using Ys.Tools.Response;
 
 namespace BMS.Controllers
@@ -13,7 +14,7 @@ namespace BMS.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class NLogController : ControllerBase
+    public class NLogController : BaseController
     {
 
         private readonly BmsV1DbContext _dbContext;
