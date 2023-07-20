@@ -54,7 +54,7 @@ namespace BMS.Controllers
         public async Task<ApiResult> GetHasUploadList(JsonElement req)
         {
             var jsonString = req.GetJsonString("codes");
-            var codeStrings = new string[] { };
+            var codeStrings = Array.Empty<string>();
             if (!string.IsNullOrEmpty(jsonString))
             {
                 codeStrings = jsonString.Split(',');
