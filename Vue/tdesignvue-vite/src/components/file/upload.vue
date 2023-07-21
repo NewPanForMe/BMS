@@ -6,9 +6,9 @@
             :auto-upload="autoUpload" :response="response" :size-limit="{ size: 300, unit: 'MB', message: '图片大小不超过300MB' }"
             :allow-upload-duplicate-file="false" @select-change="handleSelectChange" @fail="handleFail"
             @success="handleSuccess" @validate="onValidate" :before-upload="beforeUpload" :theme="theme"
-            showUploadProgress="true"
+            showUploadProgress :accept="accept"
             :codeStrings="codeStrings" />
-        <table style="min-width: 498px; max-width: 960px; text-align: center;"  >
+        <table :style="style"   >
             <thead>
                 <tr>
                     <td>文件名称</td>
@@ -48,6 +48,8 @@ let response = ref(null);
 const prop = defineProps({
     codeStrings: { type: Array, default: () => [] },
     theme: ref("single-input"),
+    tableDisplay:ref(false),
+    accept:ref("")
 });
 const handleFail = ({ file }) => {
     MessagePlugin.error(`文件 ${file.name} 上传失败`);
@@ -55,15 +57,23 @@ const handleFail = ({ file }) => {
 };
 
 
-
+let style=ref("")
+const changeTableStyle=()=>{
+    if(prop.tableDisplay){
+        style.value="min-width: 498px; max-width: 960px; text-align: center;"
+    }
+    else{
+        style.value="min-width: 498px; max-width: 960px; text-align: center;display:none"
+    }
+}
+changeTableStyle();
 const handleSelectChange = (files) => {
     console.log("onSelectChange", files);
 };
 
 const handleSuccess = (params) => {
-    let res = params.response[0];
+    let res = params.response;
     emit("Resp", res);
-    console.log(res);
     if (res.success) {
         MessagePlugin.success("上传成功");
         return;

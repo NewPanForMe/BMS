@@ -11,6 +11,7 @@
   "dependencies": {
     "@vitejs/plugin-vue-jsx": "^3.0.1",
     "axios": "^1.4.0",
+    "echarts": "^5.4.3",
     "esbuild": "0.18.11",
     "moment": "^2.29.4",
     "tdesign-icons-vue-next": "^0.1.11",

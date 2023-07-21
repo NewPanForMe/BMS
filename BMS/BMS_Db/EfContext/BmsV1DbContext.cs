@@ -1,5 +1,4 @@
 ﻿using BMS_Models.DbModels;
-
 namespace BMS_Db.EfContext;
 using Microsoft.EntityFrameworkCore;
 public class BmsV1DbContext : DbContext
@@ -12,6 +11,8 @@ public class BmsV1DbContext : DbContext
     public DbSet<MenuRole> MenuRole { get; set; }
     public DbSet<SmsLog> SmsLog { get; set; }
     public DbSet<FileUpload> FileUpload { get; set; }
+    public DbSet<Bill> Bill { get; set; }
+    public DbSet<BillDetail> BillDetail { get; set; }
 
     public BmsV1DbContext(DbContextOptions<BmsV1DbContext> options) : base(options) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

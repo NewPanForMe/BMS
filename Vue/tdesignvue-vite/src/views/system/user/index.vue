@@ -6,7 +6,9 @@
         </t-button>
     </div>
     <div class="content">
-        <baseTable   ref="table" :columns="columns" :listUrl="listUrl" @row-click="handleRowClick" @refreshTable="refresh"  />
+        <baseTable   ref="table" :columns="columns" 
+        :listUrl="listUrl"
+         @row-click="handleRowClick"  />
     </div>
 </template>
 <script setup lang="jsx">
@@ -17,6 +19,7 @@ import { reactive, ref,onMounted } from "vue";
 import { MessagePlugin } from "tdesign-vue-next";
 import { AddIcon } from "tdesign-icons-vue-next";
 import baseTable from "@/components/table/baseTable.vue";
+
 const listUrl = $api.user.GetUserList;
 
 const columns = [
@@ -72,11 +75,8 @@ onMounted(() => {
   loadTable()
 })
 const loadTable=()=>{
-    //console.log(table)
-    //console.log(table.value)
     table.value.getTableList()
 }
-let refresh = ref(false)
 const adduser = () => {
   $router.push("/user_add/add/code");
 };

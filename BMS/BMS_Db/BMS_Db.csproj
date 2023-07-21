@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="BLL\Role\" />
-    <Folder Include="BLL\Sms\" />
-    <Folder Include="BLL\File\" />
+    <Folder Include="BLL\Sys\Role\" />
+    <Folder Include="BLL\Sys\Sms\" />
+    <Folder Include="BLL\Sys\File\" />
     <Folder Include="EfContext\" />
   </ItemGroup>
 

@@ -88,7 +88,6 @@ const dropDownValueChange = (e) => {
 };
 
 const onSubmit = ({ validateResult, firstError }) => {
-    console.log(formData);
     if (validateResult === true) {
         let url = "";
         if (type == "add") url = $api.module.Add;
