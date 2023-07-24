@@ -21,7 +21,7 @@ public class LogBll : IBll
     /// </summary>
     /// <param name="count">列表获取数量</param>
     /// <returns></returns>
-    public async Task<List<NLog>> GetLogs(int count)
+    public async Task<List<BMS_Models.DbModels.NLog>> GetLogs(int count)
     {
         var listAsync = await _dbContext.NLog.OrderByDescending(x => x.Logged).Take(count).ToListAsync();
         return listAsync;

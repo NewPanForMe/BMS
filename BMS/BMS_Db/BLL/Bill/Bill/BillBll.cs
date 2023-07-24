@@ -126,10 +126,11 @@ public class BillBll : IBll
     /// <summary>
     /// 获取列表
     /// </summary>
+    /// <param name="userCode">用户编号</param>
     /// <returns></returns>
-    public async Task<List<BMS_Models.DbModels.Bill>> GetBills()
+    public async Task<List<BMS_Models.DbModels.Bill>> GetBills(string userCode)
     {
-        var listAsync = await _dbContext.Bill.AsNoTracking().ToListAsync();
+        var listAsync = await _dbContext.Bill.Where(x=>x.UserCode==userCode).AsNoTracking().ToListAsync();
         return listAsync;
     }
 

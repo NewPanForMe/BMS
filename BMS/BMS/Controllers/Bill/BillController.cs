@@ -45,8 +45,8 @@ namespace BMS.Controllers.Bill
         [HttpGet]
         public async Task<ApiResult> GetList()
         {
-            var data = await _billBll.GetBills();
-            var pagination = new Pagination()
+            var data = await _billBll.GetBills(CurrentUser.Code);
+            var pagination = new Pagination()   
             {
                 DefaultPageSize = 5,//默认多少条
                 DefaultCurrent = 1,

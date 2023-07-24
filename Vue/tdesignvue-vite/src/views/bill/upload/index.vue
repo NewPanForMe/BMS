@@ -27,7 +27,7 @@
                 </t-card>
             </t-col>
             <t-col :span="9">
-                <baseTable ref="drawTable" :columns="drawColumns" :listUrl="drawListUrl" :Param="params" />
+                <baseTable ref="drawTable" :columns="drawColumns"  :param="param"  :listUrl="drawListUrl"  />
             </t-col>
         </t-row>
     </t-drawer>
@@ -36,9 +36,35 @@
 import $instance from "@/utils/http";
 import baseTable from "@/components/table/baseTable.vue";
 import $api from "@/api/index";
-import { ref, reactive, defineComponent, onMounted } from "vue";
+import { ref,  onMounted } from "vue";
 import moment from "moment";
+//=====子表列表
 
+let drawTable = ref(null);
+let drawListUrl = ref($api.billDetail.GetList);
+const drawColumns = [
+    {
+        colKey: "date",
+        title: "交易时间",
+        align: "center",
+        cell: (h, { row }) => {
+            return moment(row.date).format("yyyy/MM/DD HH:mm:ss");
+        },
+    },
+    { colKey: "type", title: "交易分类", align: "center" },
+    { colKey: "bTo", title: "交易对方", align: "center" },
+    { colKey: "toAccount", title: "对方账号", align: "center" },
+    { colKey: "payMethod", title: "收/付款方式", align: "center" },
+    { colKey: "inOut", title: "收/支", align: "center" },
+    { colKey: "money", title: "金额", align: "center" },
+];
+
+const drawLoadTable = () => {
+    param.value = {billCode: formData.value.code};
+    console.log("draw.param",param.value)
+    drawTable.value.getTableList();
+};
+const param =ref(null)
 //=====抽屉
 const visible = ref(false);
 const footer = ref(false);
@@ -76,7 +102,6 @@ const loadTable = () => {
     table.value.getTableList();
 };
 const handleRowClick = (e) => {
-    console.log(e);
     let code = e.row.code;
     $instance
         .get($api.bill.GetBillEntityByCode, {
@@ -86,9 +111,9 @@ const handleRowClick = (e) => {
         })
         .then((resp) => {
             formData.value = resp.result.data;
-            formData.value.createDate=  timeFormat(resp.result.data.createDate);
+            formData.value.createDate = timeFormat(resp.result.data.createDate);
+            drawLoadTable();
         });
-    drawLoadTable();
     visible.value = true;
 };
 const timeFormat = (time) => {
@@ -101,29 +126,6 @@ const timeFormat = (time) => {
     var getSeconds = data.getSeconds();
     return year + "-" + getMonth + "-" + getDay + " " + getHours + ":" + getMinutes + ":" + getSeconds;
 };
-//=====子表列表
 
-let drawTable = ref(null);
-const drawListUrl = $api.billDetail.GetList;
-let params = ref({});
-const drawColumns = [
-    {
-        colKey: "date",
-        title: "交易时间",
-        align: "center",
-        cell: (h, { row }) => {
-            return moment(row.date).format("yyyy/MM/DD HH:mm:ss");
-        },
-    },
-    { colKey: "type", title: "交易分类", align: "center" },
-    { colKey: "bTo", title: "交易对方", align: "center" },
-    { colKey: "toAccount", title: "对方账号", align: "center" },
-    { colKey: "payMethod", title: "收/付款方式", align: "center" },
-    { colKey: "inOut", title: "收/支", align: "center" },
-    { colKey: "money", title: "金额", align: "center" },
-];
 
-const drawLoadTable = () => {
-    drawTable.value.getTableList();
-};
-</script>
+</script>   
