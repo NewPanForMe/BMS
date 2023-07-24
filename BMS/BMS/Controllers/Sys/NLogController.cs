@@ -1,4 +1,4 @@
-﻿using BMS_Db.BLL.Sys.Log;
+﻿using BMS_Db.BLL.Sys.NLog;
 using BMS_Db.EfContext;
 using BMS_Models.DbModels;
 using Microsoft.AspNetCore.Authorization;
