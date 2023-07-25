@@ -22,17 +22,25 @@ namespace BMS.Controllers.Bill
         }
 
         [HttpGet]
-        public async Task<ApiResult> GetTypeChart()
+        public async Task<ApiResult> GetTypeChart(int year, int month,string type)
         {
-            var typeChart =await _billDetailBll.GetTypeChart(CurrentUser);
+            var typeChart =await _billDetailBll.GetTypeChart(CurrentUser, year,month, type);
             return typeChart;
         }
 
 
+        [HttpGet]
+        public async Task<ApiResult> GetPayTypeChart(int year,int month)
+        {
+            var typeChart = await _billDetailBll.GetPayTypeChart(CurrentUser, year,month);
+            return typeChart;
+        }
 
-
-
-
-
+        [HttpGet]
+        public async Task<ApiResult> GetInChart(int year, int month, string type)
+        {
+            var typeChart = await _billDetailBll.GetInChart(CurrentUser, year, month, type);
+            return typeChart;
+        }
     }
 }

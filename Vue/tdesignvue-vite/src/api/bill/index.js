@@ -11,7 +11,8 @@ const api = {
     },
     chart:{
         GetTypeChart: window.config.baseUrl + "/Chart/GetTypeChart",
-
+        GetPayTypeChart: window.config.baseUrl + "/Chart/GetPayTypeChart",
+        GetInChart: window.config.baseUrl + "/Chart/GetInChart",
     }
 }
 export default api

@@ -1,68 +1,83 @@
 <template>
+    <div class="content-top">
+        <t-form layout="inline">
+            <t-form-item label="年份" name="name">
+                <t-select v-model="form.year" :onChange="payTypeSelectChange">
+                    <t-option v-for="item in yearList" :key="item" :value="item">{{ item }}</t-option>
+                </t-select>
+            </t-form-item>
+            <t-form-item label="月份" name="password">
+                <t-select v-model="form.month" :onChange="payTypeSelectChange">
+                    <t-option v-for="item in monthList" :key="item" :value="item">{{ item }}</t-option>
+                </t-select>
+            </t-form-item>
+            <t-form-item label="平台" name="password">
+                <t-select v-model="form.type" :onChange="payTypeSelectChange">
+                    <t-option value="微信">微信</t-option>
+                    <t-option value="支付宝">支付宝</t-option>
+                </t-select>
+            </t-form-item>
+        </t-form>
+    </div>
     <div class="content">
         <t-space break-line>
             <t-card>
-                <div id="contain" style="height: 400px; width: 480px"></div>
+                <chart  chartId="chart1"  :chartUrl="$api.chart.GetTypeChart"  
+                chartTitle="消费类型<支出>"   :param="form" ref="chartData" />
+            </t-card>
+            <t-card>
+                <chart  chartId="chart2" :chartUrl="$api.chart.GetInChart"
+                 chartTitle="收入信息" :param="form" ref="chart2Data" />
+            </t-card>
+            <t-card>
+                <payType :param="form" ref="payTypeData" />
             </t-card>
         </t-space>
     </div>
 </template>
 <script setup lang="jsx">
-import $instance from "@/utils/http";
 import $api from "@/api/index";
-import $router from "@/router/router";
 import { reactive, ref, onMounted } from "vue";
-import * as echarts from "echarts";
-
-let chart1Data = ref([]);
-const initChart1 = (id) => {
-    let newPromise = new Promise((resolve) => {
-        resolve();
-    });
-    //然后异步执行echarts的初始化函数
-    newPromise.then(() => {
-        //	此dom为echarts图标展示dom
-        let chart = echarts.init(document.getElementById(id));
-        var option = {
-            title: {
-                text: "消费类型",
-            },
-            tooltip: {
-                trigger: "item",
-            },
-            legend: {
-                orient: "horizontal",
-                type:"scroll",
-                　top:"7%"//与上方的距离 可百分比% 可像素px
-            },
-            series: [
-                {
-                    name: "消费类型",
-                    type: "pie",
-                    radius: "50%",
-                    data: chart1Data.value,
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: "rgba(0, 0, 0, 0.5)",
-                        },
-                    },
-                },
-            ],
-        };
-        chart.setOption(option);
-    });
+import chart from "./components/chart.vue";
+import payType from "./components/payType.vue";
+let chartData = ref(null);
+let chart2Data = ref(null);
+let payTypeData = ref(null);
+const payTypeSelectChange = () => {
+    console.log("payTypeSelectChange.chartData", chartData.value);
+    chartData.value.getChart1Data($api.chart.GetTypeChart);
+    chart2Data.value.getChart1Data($api.chart.GetInChart);
+    payTypeData.value.getPayType();
 };
-const getChart1Data = () => {
-    $instance.get($api.chart.GetTypeChart).then((resp) => {
-        console.log(resp);
-        if (resp.success) {
-            chart1Data.value = resp.result.data;
-            initChart1("contain");
+let form = ref({
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    type: "微信",
+});
+
+let yearList = ref([]);
+let monthList = ref([]);
+const getYear = () => {
+    var date = new Date();
+    var year = date.getFullYear();
+    for (let index = 0; index < 3; index++) {
+        yearList.value.push(year - index);
+    }
+};
+getYear();
+const getMonth = () => {
+    var date = new Date();
+    var month = date.getMonth();
+    if (month == 12) {
+        for (let index = 0; index < 12; index++) {
+            monthList.value.push(month - index);
         }
-    });
+    } else {
+        for (let index = 0; index <= month; index++) {
+            let val = month - index + 1;
+            monthList.value.push(val);
+        }
+    }
 };
-
-getChart1Data();
+getMonth();
 </script>

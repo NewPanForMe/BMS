@@ -27,7 +27,7 @@
                 </t-card>
             </t-col>
             <t-col :span="9">
-                <baseTable ref="drawTable" :columns="drawColumns"  :param="param"  :listUrl="drawListUrl"  />
+                <baseTable ref="drawTable" :columns="drawColumns"  :param.sync="param"  :listUrl="drawListUrl"  />
             </t-col>
         </t-row>
     </t-drawer>
@@ -59,11 +59,7 @@ const drawColumns = [
     { colKey: "money", title: "金额", align: "center" },
 ];
 
-const drawLoadTable = () => {
-    param.value = {billCode: formData.value.code};
-    console.log("draw.param",param.value)
-    drawTable.value.getTableList();
-};
+
 const param =ref(null)
 //=====抽屉
 const visible = ref(false);
@@ -127,5 +123,8 @@ const timeFormat = (time) => {
     return year + "-" + getMonth + "-" + getDay + " " + getHours + ":" + getMinutes + ":" + getSeconds;
 };
 
-
+const drawLoadTable = () => {
+    param.value = {billCode: formData.value.code};
+    drawTable.value.getTableList();
+};
 </script>   

@@ -13,7 +13,7 @@
                 </t-card>
             </t-col>
             <t-col :span="10">
-                <baseTable   ref="table" :columns="columns" :Param="param" :listUrl="listUrl" @row-click="handleRowClick" />
+                <baseTable   ref="table" :columns="columns" :param="param" :listUrl="listUrl" @row-click="handleRowClick" />
             </t-col>
         </t-row>
     </div>
@@ -88,6 +88,7 @@ const loadTable=()=>{
 const TreeNodeClick = (e) => {
     TreeNodeValue.value = e.value;
     param.value={treeCode:e.value}
+    console.log("TreeNodeClick.param", param.value)
     loadTable()
 };
 

@@ -31,7 +31,8 @@ public class FileBll : IBll
         if (!Directory.Exists(fileFullPath)) Directory.CreateDirectory(fileFullPath);
         Console.WriteLine($"fileFullPath={fileFullPath}");
         var filePath = fileFullPath + "\\" + Guid.NewGuid() + "-" + file.FileName;
-        await file.CopyToAsync(System.IO.File.Create(filePath)).WaitAsync(TimeSpan.FromSeconds(10));
+        await using var stream = System.IO.File.Create(filePath);
+        await file.CopyToAsync(stream);
         var files = new FileUpload()
         {
             UserCode = userCode,

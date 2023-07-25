@@ -71,8 +71,7 @@ const loadTable = () => {
 };
 
 //===========基础表单==================
-let yearList = ref([]);
-let monthList = ref([]);
+
 const form = ref(null);
 const formData = reactive({
     Year: "",
@@ -80,6 +79,8 @@ const formData = reactive({
     Location: "",
     Type: "",
 });
+let yearList = ref([]);
+let monthList = ref([]);
 const getYear = () => {
     var date = new Date();
     var year = date.getFullYear();
