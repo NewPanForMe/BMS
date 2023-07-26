@@ -18,7 +18,10 @@ public class BillBll : IBll
 {
     private readonly BmsV1DbContext _dbContext;
     private readonly ILogger<BillBll> _logger;
-
+    private readonly string[] _detailOutStatus = new string[]
+    {
+        "交易成功", "还款成功", "充值完成", "支付成功","已转账","对方已收钱"
+    };
     public BillBll(BmsV1DbContext dbContext, ILogger<BillBll> logger)
     {
         _dbContext = dbContext;
@@ -63,7 +66,7 @@ public class BillBll : IBll
             desc += readCsv[i].A + "\r\n";
         }
         bill.Remark = desc;
-        await _dbContext.Bill.AddAsync(bill);
+      
         var detailList = new List<BMS_Models.DbModels.BillDetail>();
         for (var i = start; i < readCsv.Count; i++)
         {
@@ -114,10 +117,12 @@ public class BillBll : IBll
                 };
 
             }
-
-
             detailList.Add(billDetail);
         }
+
+        bill.InMoney= detailList.Where(x => x.InOut == "收入").Select(x => x.Money).Sum();
+        bill.OutMoney= detailList.Where(x => _detailOutStatus.Contains(x.Status)).Select(x => x.Money).Sum();
+        await _dbContext.Bill.AddAsync(bill);
         await _dbContext.BillDetail.AddRangeAsync(detailList);
         return ApiResult.True(new { code = bill.Code });
     }

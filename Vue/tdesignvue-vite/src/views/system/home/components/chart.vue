@@ -34,7 +34,7 @@ const initChart1 = (id) => {
                     radius: "50%",
                     data: chart1Data.value,
                     label: {
-                        formatter: "{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ",
+                        formatter: " {b|{b}：}{c}  {per|{d}%}  ",
                         backgroundColor: "#F6F8FC",
                         borderColor: "#8C8D8E",
                         borderWidth: 1,
@@ -57,12 +57,7 @@ const initChart1 = (id) => {
                                 fontWeight: "bold",
                                 lineHeight: 33,
                             },
-                            per: {
-                                color: "#fff",
-                                backgroundColor: "#4C5058",
-                                padding: [3, 4],
-                                borderRadius: 4,
-                            },
+                     
                         },
                     },
                     emphasis: {

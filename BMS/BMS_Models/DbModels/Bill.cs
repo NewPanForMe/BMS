@@ -38,6 +38,15 @@
         /// 累心
         /// </summary>
         public string Type { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 累计收入
+        /// </summary>
+        public decimal InMoney { get; set; }
+        /// <summary>
+        /// 支出
+        /// </summary>
+        public decimal OutMoney { get; set; }
     }
 }
 
