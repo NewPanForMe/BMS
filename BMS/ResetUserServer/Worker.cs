@@ -25,14 +25,13 @@ namespace ResetUserServer
             {
                 await Task.Delay(1000, stoppingToken);
                 Console.WriteLine($"用户解锁服务运行中-{DateTime.Now}");
-                var user = await _dbContext.User.Where(x => x.ErrorCount == 3 && x.ErrorCancelTime.Date == DateTime.Now.Date).AsNoTracking().ToListAsync(stoppingToken);
+                var user = await _dbContext.User.Where(x => x.ErrorCount == 3 && x.ErrorCancelTime.Date == DateTime.Now.Date).ToListAsync(stoppingToken);
                 if (user.Count > 0)
                 {
                     async void Action(User x)
                     {
                         if (x.ErrorCancelTime.Hour == DateTime.Now.Hour && x.ErrorCancelTime.Minute == DateTime.Now.Minute && x.ErrorCancelTime.Second == DateTime.Now.Second)
                         {
-                            _dbContext.Entry(x).State = EntityState.Detached;
                             x.ErrorCount = 0;
                             x.IsLock = false;
                             _dbContext.User.Update(x);
