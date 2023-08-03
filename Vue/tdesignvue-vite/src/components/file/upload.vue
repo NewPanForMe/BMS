@@ -97,7 +97,6 @@ const onValidate = (params) => {
     messageMap[type] && MessagePlugin.warning(messageMap[type]);
 };
 
-/** 单个文件校验方法，示例代码有效，勿删 */
 const beforeUpload = (file) => {
     var token = $cookies.getToken();
     header.value = {
