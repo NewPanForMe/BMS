@@ -51,7 +51,7 @@ const payTypeSelectChange = () => {
 };
 let form = ref({
     year: new Date().getFullYear(),
-    month: new Date().getMonth() + 1,
+    month: new Date().getMonth(),
     type: "微信",
 });
 
@@ -74,7 +74,7 @@ const getMonth = () => {
         }
     } else {
         for (let index = 0; index <= month; index++) {
-            let val = month - index + 1;
+            let val = month - index ;
             monthList.value.push(val);
         }
     }
